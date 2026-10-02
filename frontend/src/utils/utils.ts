@@ -1,17 +1,22 @@
 import type { UserData } from "../contexts/userContext"
 
-export async function login(email: string, password: string, getUser: () => Promise<UserData | null>) {
+type ApiError = {
+  detail: string;
+}
+
+export async function login(identifier: string, password: string, getUser: () => Promise<UserData | null>) {
   if (localStorage.getItem('access-token')) return
 
   const res = await fetch("http://192.168.1.33:8000/login", {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
-      email, password
+      identifier, password
     })
   })
   if (!res.ok) {
-    throw new Error("Nie udało się zalogować")
+    const error : ApiError = await res.json()
+    throw new Error(error.detail)
   }
   const data = await res.json()
   if (!data.token) {

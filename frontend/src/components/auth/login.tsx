@@ -3,8 +3,13 @@ import { motion, AnimatePresence } from "framer-motion"
 import { IconEye, IconEyeOff, IconLock, IconMail, IconUser } from "@tabler/icons-react"
 import { Link } from "react-router-dom"
 import '../../css/login.css'
+import { login } from "../../utils/utils"
+import useUser from "../../contexts/userContext"
+import { useNavigate } from "react-router-dom"
 
 export default function Login() {
+  const { getUser } = useUser()
+  const navigate = useNavigate()
 
   function Google() {
     return (
@@ -19,12 +24,6 @@ export default function Login() {
 
   type AuthType = "username" | "email" | "google"
 
-  interface Credentials {
-    username: string
-    email: string
-    password: string
-  }
-
   const [ chosenType, setChosenType ] = useState<AuthType>('username')
 
   const [ username, setUsername ] = useState<string>('')
@@ -32,6 +31,26 @@ export default function Login() {
   const [ password, setPassword ] = useState<string>('')
   const [ passwordShown, setPasswordShown ] = useState(false)
   const [ rememberMe, setRememberMe ] = useState(true)
+  const [ error, setError ] = useState('')
+
+  function setErr(error: Error) {
+    setError(error.message)
+    const id = window.setTimeout(() => {
+      setError('')
+    }, 3000)
+    return () => window.clearTimeout(id)
+  }
+
+  async function handleLogin(identifier: string) {
+    try {
+      await login(identifier, password, getUser)
+      navigate("/")
+    } catch (err) {
+      if (err instanceof Error) {
+        setErr(err)
+      }
+    }
+  }
 
   return (
     <div className="login-container">
@@ -78,6 +97,7 @@ export default function Login() {
                 { passwordShown ? <IconEyeOff stroke={2} className="password-icon" onClick={() => (setPasswordShown(false))} /> 
                   : <IconEye stroke={2} className="password-icon" onClick={() => (setPasswordShown(true))} /> }
                 </div>
+                { error && <p className="error">{ error }</p> }
                 <div className="login-buttons">
                   <div className="remember-me-container">
                     <label className="remember-me">
@@ -87,7 +107,7 @@ export default function Login() {
                     </label>
                   </div>
                   <Link to={'/reset'} className="reset-password">Zresetuj hasło</Link>
-                  <button className="login-button" disabled={username.length < 2 || password.length < 8}>
+                  <button className="login-button" disabled={username.length < 2 || password.length < 8} onClick={() => {handleLogin(username)}}>
                     <span>Zaloguj się</span>
                   </button>
                 </div>
@@ -119,7 +139,7 @@ export default function Login() {
                     </label>
                   </div>
                   <Link to={'/reset'} className="reset-password">Zresetuj hasło</Link>
-                  <button className="login-button" disabled={email.length < 3 || password.length < 8}>
+                  <button className="login-button" disabled={email.length < 3 || password.length < 8} onClick={() => {handleLogin(email)}}>
                     <span>Zaloguj się</span>
                   </button>
                 </div>

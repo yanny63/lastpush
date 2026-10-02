@@ -207,7 +207,7 @@
 
 .login-buttons {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: auto 1fr;
   grid-template-rows: 1fr 1fr;
   width: 100%;
   gap: 6px;
@@ -265,9 +265,9 @@
   align-self: center;
   justify-self: end;
   color: var(--accent-blue-dark);
-  pointer-events: none;
   opacity: 0.3;
   color: var(--text-secondary);
+  pointer-events: none;
   transition: 0.3s;
 }
 .reset-password:hover {
@@ -335,4 +335,9 @@
 .continue-google span {
   flex: 1;
   text-align: center;
+}
+
+.error {
+  color: var(--color-red);
+  font-weight: 600;
 }

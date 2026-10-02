@@ -235,14 +235,17 @@ async def verify(token: str = Query(...)):
     raise HTTPException(status_code=400, detail="Nieprawidłowy token")
 
 class Login(BaseModel):
-  email: str
+  identifier: str
   password: str
 
 @app.post("/login")
 async def login(user: Login):
   u = await fetch_one(
-    "SELECT * FROM users WHERE email = %s", (user.email,)
+    "SELECT * FROM users WHERE email = %s OR username = %s", (user.identifier, user.identifier)
   )
+
+  if not u:
+    raise HTTPException(status_code=401, detail="Nieprawidłowy login lub hasło")
 
   if not u.get("verified"):
     raise HTTPException(status_code=403, detail="Niezweryfikowane konto")

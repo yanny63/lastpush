@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import { IconUser, IconQuestionMark, IconBell, IconUsers, IconX, IconShoppingCart, IconMoneybag, IconSettings, IconCreditCard, IconMoon } from "@tabler/icons-react"
+import { IconUser, IconQuestionMark, IconBell, IconUsers, IconX, IconShoppingCart, IconMoneybag, IconSettings, IconCreditCard, IconMoon, IconLogout } from "@tabler/icons-react"
 import { AnimatePresence, motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import useUser from "../contexts/userContext"
@@ -32,7 +32,7 @@ function Elo() {
 }
 
 function UserProfile() {
-  const { user } = useUser()
+  const { user, logout } = useUser()
 
   function Circle() {
     return (
@@ -53,10 +53,10 @@ function UserProfile() {
     {text: "Subskrypcje", svg: <IconCreditCard stroke={2} />},
   ]
 
-  const [ preffersDark, setPreffersDark ] = useState<boolean>(false)
+  const [ prefersDark, setPrefersDark ] = useState<boolean>(false)
   useEffect(() => {
     const p = localStorage.getItem('dark-mode') === 'true' ? true : false
-    setPreffersDark(p)
+    setPrefersDark(p)
   }, [])
 
   function Avatar() {
@@ -67,8 +67,12 @@ function UserProfile() {
     }
   }
 
+  async function _logout() {
+    setOpen(false)
+    await logout()
+  }
+
   return (
-    // if user has no profile picture set display the default svg
     <>
       <div className="user-profile" onClick={handleClick}>
         <Avatar />
@@ -119,12 +123,17 @@ function UserProfile() {
                 <span>{option.text}</span>
               </div>
             ))}
-            <div className="preffered-theme">
+            <div className="prefered-theme">
               <IconMoon stroke={2} />
               <span className="theme-toggle-text">Tryb Ciemny</span>
-              <span className={preffersDark ? "theme-toggle-container preffers-dark" : "theme-toggle-container"} onClick={() => {setPreffersDark(prev => !prev)}}>
-                <span className={preffersDark ? "theme-toggle preffers-dark" : "theme-toggle"}></span>
-              </span>
+              <button type="button" className={prefersDark ? "theme-toggle-container prefers-dark" : "theme-toggle-container"} aria-pressed={prefersDark} aria-label="Przełącz tryb ciemny"
+              onClick={() => {setPrefersDark(prev => !prev)}}>
+                <span className={prefersDark ? "theme-toggle prefers-dark" : "theme-toggle"}></span>
+              </button>
+            </div>
+            <div className="account-option" onClick={() => {_logout()}}>
+              <IconLogout stroke={2} />
+              <span>Wyloguj</span>
             </div>
           </div>
         </motion.div>}

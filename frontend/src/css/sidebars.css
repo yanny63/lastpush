@@ -24,7 +24,7 @@
   width: 100%;
   background-color: var(--bg-secondary);
 }
-
+ 
 .side-logo-container {
   display: flex;
   align-items: center;
@@ -413,7 +413,7 @@
   background-color: var(--bg-tertiary);
 }
 
-.preffered-theme {
+.prefered-theme {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -448,10 +448,10 @@
   border-radius: var(--radius-full);
   transition: 0.2s;
 }
-.theme-toggle-container.preffers-dark {
+.theme-toggle-container.prefers-dark {
   background-color: var(--color-blue);
 }
-.theme-toggle.preffers-dark {
+.theme-toggle.prefers-dark {
   left: 60%;
   background-color: var(--bg-tertiary);
 }
