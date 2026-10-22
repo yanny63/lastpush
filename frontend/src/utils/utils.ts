@@ -57,11 +57,12 @@ export async function friend(friend_id: string) {
 
   const res = await fetch(`http://192.168.1.33:8000/friend?friend_id=${friend_id}`, {
     method: "POST",
-    headers: {"Authentication": `Bearer ${token}`}
+    headers: {"Authorization": `Bearer ${token}`}
   })
 
   if (!res.ok) {
-    throw new Error("Błąd podczas dodawania znajomego")
+    const error : ApiError = await res.json()
+    throw new Error(error.detail)
   }
 }
 
@@ -71,11 +72,12 @@ export async function unfriend(friend_id: string) {
 
   const res = await fetch(`http://192.168.1.33:8000/unfriend?friend_id=${friend_id}`, {
     method: "POST",
-    headers: {"Authentication": `Bearer ${token}`}
-  })
+    headers: {"Authorization": `Bearer ${token}`}
+  }) 
 
   if (!res.ok) {
-    throw new Error("Błąd podczas dodawania znajomego")
+    const error : ApiError = await res.json()
+    throw new Error(error.detail)
   }
 }
 

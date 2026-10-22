@@ -297,24 +297,28 @@ async def getMe(token = Depends(auth_scheme)):
 @app.get("/profile/{id}")
 async def profile(id: str, token = Depends(auth_scheme)):
   try:
-    user_id = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+    user_id = payload.get('sub')
   except:
     user_id = None
 
   try: 
     profile = await fetch_one(
-      """SELECT u.username, u.avatar, u.created_at, COUNT(f.friend_id) AS friends_count,
+      """SELECT u.username, u.avatar, u.created_at, COUNT(f.friend_id) AS friends_count, fr.status,
       EXISTS (
         SELECT 1 
         FROM friends AS relation
-        WHERE relation.user_id = u.id AND relation.friend_id = %s
+        WHERE relation.user_id = u.id AND relation.friend_id = %s OR relation.user_id = %s AND relation.friend_id = u.id
       ) AS is_friend
       FROM users AS u
       LEFT JOIN friends AS f 
-        ON f.user_id = u.id
+        ON f.user_id = u.id OR f.friend_id = u.id
         AND f.status = 'accepted'
+      LEFT JOIN friends AS fr 
+        ON fr.user_id = u.id OR f.friend_id = u.id
+        AND fr.status = 'pending'
       WHERE u.id = %s
-      GROUP BY u.id, u.username, u.avatar, u.created_at""", (user_id, id)
+      GROUP BY u.id, u.username, u.avatar, u.created_at, fr.status""", (user_id, user_id, id)
     )
   except psycopg2.DataError:
     raise HTTPException(status_code=404)
@@ -331,7 +335,7 @@ async def friend(token = Depends(auth_scheme), friend_id: str = Query(...)):
     raise HTTPException(status_code=401, detail="Zły token")
 
   await execute(
-    """INSERT INTO friends (user_id, friend_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""", (payload.get('user_id', None), friend_id)
+    """INSERT INTO friends (user_id, friend_id) VALUES (%s, %s) ON CONFLICT DO NOTHING""", (payload.get('sub', None), friend_id)
   )
 
   return {"status": 200}
@@ -348,3 +352,15 @@ async def unfriend(token = Depends(auth_scheme), friend_id: str = Query(...)):
   )
 
   return {"status": 200}
+
+@app.get("/api/exercises")
+async def exercises(startId: int = Query(...)):
+  limit = 20
+  e = await fetch_all("SELECT * FROM exercises WHERE id > %s ORDER BY id ASC LIMIT %s", (startId, limit))
+
+  return {
+    "limit": 20,
+    "current_start_id": startId,
+    "next_start_id": startId + 20,
+    "exercises": e
+  }

@@ -114,7 +114,7 @@ function Nav({ navVisibleRef }: {navVisibleRef: React.RefObject<boolean>}) {
       <div className={["nav-container", !navVisibleRef.current && "nav-not-visible", !scrolled && !isOpen && "nav-not-scrolled",].filter(Boolean).join(" ")}>
         <div className="nav-links" style={user ? {width: "100%"} : {}}>
           <Link to={"/"} className="nav-link">Strona Główna</Link>
-          <Link to={"/"} className="nav-link">Trening</Link>
+          <Link to={"/trening"} className="nav-link">Trening</Link>
           <Link to={"/"} className="nav-link">Ćwiczenia</Link>
           <span className="nav-utils-container" onMouseEnter={() => {handleMouseEnter()}} onMouseLeave={() => {handleMouseLeave()}}>
             <span>Narzędzia</span>

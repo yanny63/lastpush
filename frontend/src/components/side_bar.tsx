@@ -76,11 +76,9 @@ export default function LeftSideBar() {
   return (
     <div ref={ref} className="left-side-main">
       <div className="left-side">
-        <div className="side-logo-container">
-          <Link to={'/#home'}>
-            <Logo xy={40}/>
-          </Link>
-        </div>
+        <Link to={'/#home'} className="side-logo-container">
+          <Logo xy={40}/>
+        </Link>
         <div className="search-input-container side-bar-div" onClick={() => (setSearchInputOpen(true))}>
           <IconSearch stroke={2} />
           <span>Szukaj</span>

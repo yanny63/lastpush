@@ -28,8 +28,6 @@ function useMedia(query: string) {
 export default function Profile() {
   const { user } = useUser()
   const { id } = useParams()
-  
-  // document.documentElement.style.setProperty("--profile-bg", user!.background)
 
   const avatarRef = useRef<SVGSVGElement | null>(null)
 
@@ -111,7 +109,7 @@ export default function Profile() {
 
   function showError(message: string) {
     const id = Date.now() + Math.random() * 50
-    console.log(id)
+    
     setErrors(prev => [...prev, {id, message}])
     setTimeout(() => {
       setErrors(prev => prev.filter(error => error.id !== id))
@@ -123,8 +121,8 @@ export default function Profile() {
     if (!id) return
     try {
       await friend(id)
-    } catch {
-      showError("Wystąpił błąd podczas dodawania znajomego")
+    } catch (err) {
+      if (err instanceof Error) showError(err.message)
     }
   }
 
@@ -200,14 +198,21 @@ export default function Profile() {
               </motion.div>}
             </AnimatePresence>
             <div className="profile-manage">
-              { profile.is_friend ? 
-              <button ref={toggleActionsRef} className="add-friend are-friends" onClick={() => {setShowFriendActions(true)}}>
-                <IconUserCheck stroke={2} />
-                <span>Znajomi</span>
-              </button> :
-              <button className="add-friend" onClick={addFriend}>
-                Dodaj do znajomych
-              </button> }
+              { user?.id === id ? 
+              <>
+                <button className="add-friend">Edytuj profil</button>
+              </> :
+              <>
+                { profile.is_friend ? 
+                <button ref={toggleActionsRef} className="add-friend are-friends" onClick={() => {setShowFriendActions(true)}}>
+                  <IconUserCheck stroke={2} />
+                  <span>Znajomi</span>
+                </button> :
+                <button className="add-friend" onClick={addFriend}>
+                  Dodaj do znajomych
+                </button> }
+              </>
+              }
               <button className="user-manage">
                 <IconDots stroke={2} />
               </button>

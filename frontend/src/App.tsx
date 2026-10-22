@@ -10,6 +10,8 @@ import { Routes, Route, useLocation } from "react-router-dom"
 import { ScrollToHash } from "./utils/scroll_hash"
 const Verify = lazy(() => import("./components/auth/verify"))
 const Profile = lazy(() => import("./components/profile"))
+const Trening = lazy(() => import("./components/trening"))
+const NewWorkout = lazy(() => import("./components/newWorkout"))
 import useUser from "./contexts/userContext"
 
 export default function App() {
@@ -53,6 +55,8 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/verify" element={<Verify />} />
             <Route path="/profile/:id" element={<Profile />} />
+            <Route path="/trening" element={<Trening />} />
+            <Route path="/newWorkout" element={<NewWorkout />} />
           </Routes>
         </main>
         <RightBar />

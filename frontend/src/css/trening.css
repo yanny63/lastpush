@@ -1,0 +1,182 @@
+:root {
+  --color-blue: #007AFF;
+  --color-green: #34C759;
+  --color-indigo: #5856D6;
+  --color-orange: #FF9500;
+  --color-pink: #FF2D55;
+  --color-purple: #AF52DE;
+  --color-red: #FF3B30;
+  --color-teal: #5AC8FA;
+  --color-yellow: #FFCC00;
+  --color-mint: #00C7BE;
+  --color-brown: #A2845E;
+  --color-cyan: #32ADE6;
+ 
+  --accent-graphite: #8E8E93;
+  --accent-red: #FF3B30;
+  --accent-orange: #FF9500;
+  --accent-yellow: #FFCC00;
+  --accent-green: #34C759;
+  --accent-blue: #007AFF;
+  --accent-purple: #AF52DE;
+  --accent-pink: #FF2D55;
+  
+  --accent-blue-light: #5AB0FF;
+  --accent-blue-soft: #E8F4FF;
+  --accent-blue-muted: #B9DEFF;
+  --accent-blue-dark: #005FCC;
+  --accent-blue-deep: #003F87;
+
+  --profile-cover-default: linear-gradient(135deg, #003F87 0%, #007AFF 52%, #5AB0FF 100%);
+  --profile-cover-dark: linear-gradient(135deg, #001B3A 0%, #005FCC 55%, #0A84FF 100%);
+  --profile-cover-soft: linear-gradient(135deg, #E8F4FF 0%, #B9DEFF 52%, #5AB0FF 100%);
+
+  --gray-50: #F9F9FB;
+  --gray-100: #F2F2F7;
+  --gray-200: #E5E5EA;
+  --gray-300: #D1D1D6;
+  --gray-400: #C7C7CC;
+  --gray-500: #AEAEB2;
+  --gray-600: #8E8E93;
+  --gray-700: #636366;
+  --gray-800: #48484A;
+  --gray-900: #3A3A3C;
+  --gray-950: #1C1C1E;
+ 
+  --bg-primary: #FFFFFF;
+  --bg-secondary: #F2F2F7;
+  --bg-tertiary: #E5E5EA;
+  --bg-elevated: #FFFFFF;
+ 
+  --text-primary: #000000;
+  --text-secondary: rgba(60, 60, 67, 0.6);
+  --text-tertiary: rgba(60, 60, 67, 0.3);
+  --text-quaternary: rgba(60, 60, 67, 0.18);
+ 
+  --separator: rgba(60, 60, 67, 0.29);
+  --separator-opaque: #C6C6C8;
+  --border-subtle: rgba(0, 0, 0, 0.08);
+ 
+  --material-ultra-thin: rgba(255, 255, 255, 0.5);
+  --material-thin: rgba(255, 255, 255, 0.7);
+  --material-regular: rgba(255, 255, 255, 0.85);
+  --material-thick: rgba(255, 255, 255, 0.95);
+ 
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+ 
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+ 
+  --border-subtle: rgba(0, 0, 0, 0.06);
+  --border-default: rgba(0, 0, 0, 0.1);
+  --border-strong: rgba(0, 0, 0, 0.16);
+  --border-separator: rgba(60, 60, 67, 0.29);
+ 
+  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+.trening-main-con {
+  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
+  color: var(--text-primary);
+  gap: 120px;
+  opacity: 1;
+  transform: none;
+  animation: onEnter 0.2s linear;
+}
+
+@keyframes onEnter {
+  from {
+    opacity: 0;
+  } to {
+    opacity: 1;
+  }
+}
+
+.trening-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.greyish {
+  color: var(--text-secondary);
+}
+
+.blue-bg {
+  background-color: var(--color-blue);
+  padding: 18px;
+  border-radius: 16px;
+  border: none;
+  outline: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  color: #fff;
+}
+
+.trening-main {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  align-items: center;
+}
+
+.create-workout-plan {
+  background-color: var(--accent-blue);
+  color: #fff;
+  padding-block: 12px;
+  width: 100%;
+  max-width: 620px;
+  outline: none;
+  border: none;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: 0.3s;
+}
+.create-workout-plan:hover {
+  background-color: var(--accent-blue-dark);
+}
+.plus {
+  transition: 0.3s;
+}
+.create-workout-plan:hover .plus {
+  transform: rotate(15deg);
+}
+
+.trening-footer {
+  width: 100%;
+  border-top: 1px solid var(--border-strong);
+  padding-top: 40px;
+}
+
+.trening-f-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 820px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.t-footer-element {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
