@@ -1,36 +1,53 @@
-import { IconBarbell, IconBolt, IconChevronRight, IconFlame, IconStack2 } from "@tabler/icons-react";
-import React, { useState } from "react";
+import { IconBarbell, IconBolt, IconChevronRight, IconFilter, IconFlame, IconProgressDown, IconSearch, IconStack2 } from "@tabler/icons-react";
+import React, { useEffect, useRef, useState } from "react";
 import ReactDOM from 'react-dom'
 import "../css/newWorkout.css"
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function newWorkout() {
-  interface Exercise {
-    id: number,
-    name: string,
-    muscle_group: string,
-    equipment: string,
-    movement_type: string,
-    is_compound: boolean,
-    description?: string
-  }
+interface Exercise {
+  id: number,
+  name: string,
+  muscle_group: string,
+  equipment: string,
+  movement_type: string,
+  is_compound: boolean,
+  description?: string
+}
 
+interface ExerciseInfo {
+  count: number
+}
+
+type Muscles = "all" | "chest" | "back" | "legs" | "shoulders" | "arms" 
+
+export default function newWorkout() {
   const fullScreenOverlay = (children: React.ReactNode) => {
     return ReactDOM.createPortal(children, document.body)
   }
 
-  const [ currentId, setCurrentId ] = useState<number>(1)
+  const [ currentId, setCurrentId ] = useState<number>(0)
   const [ exercises, setExercises ] = useState<Array<Exercise>>([])
   const [ portalVisible, setPortalVisible ] = useState(false)
 
+  const scrollRef = useRef<HTMLDivElement | null>(null)
+  const [ loading, setLoading ] = useState(false)
+
   async function getExercises() {
-    const res = await fetch(`http://192.168.1.33:8000/api/exercises?startId=${currentId}`)
-    if (!res.ok) {
-      throw new Error("Nie udało się pobrać ćwiczeń")
+    if (loading) return
+    setLoading(true)
+    try {
+      const res = await fetch(`http://192.168.1.33:8000/api/exercises?startId=${currentId}`)
+      const data = await res.json()
+      const e : Array<Exercise> = data.exercises 
+      setExercises(prev => [...prev, ...e])
+      setCurrentId(prev => prev + 20)
     }
-    const data = await res.json()
-    const e : Array<Exercise> = data.exercises 
-    setExercises(prev => [...prev, ...e])
+    catch (e) {
+      console.log("Nie udało się pobrać ćwiczeń")
+    }
+    finally {
+      setLoading(false)
+    }
   }
 
   async function submitWorkout() {
@@ -40,11 +57,75 @@ export default function newWorkout() {
   async function changePortalVisibility(e: React.MouseEvent) {
     e.preventDefault()
     setPortalVisible(true)
+  }
+
+  function setPortalHidden(e: React.MouseEvent) {
+    if ((e.target as Element).closest(".exercises-portal")) {
+      return
+    }
+    setPortalVisible(false)
+  }
+
+  const [ exerciseInfo, setExerciseInfo ] = useState<ExerciseInfo | null>(null)
+
+  async function getExerciseInfo() {
+    try {
+      const res = await fetch("http://192.168.1.33:8000/api/exercises/info")
+      const data : ExerciseInfo = await res.json()
+      setExerciseInfo(data)
+    }
+    catch (e) {
+      console.log("Nie udało się pobrać informacji o ćwiczeniach")
+    }
+  }
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(async (entries) => {
+      const observed = entries[0]
+      if (observed.isIntersecting) {
+        await loadExercises()
+      }
+    }, {threshold: 1.0})
+    
+    if (scrollRef.current) {
+      observer.observe(scrollRef.current)
+    }
+
+    return () => {if (scrollRef.current) observer.unobserve(scrollRef.current)}
+
+  }, [loading, portalVisible, currentId])
+
+  async function loadExercises() {
+    if (currentId >= exerciseInfo!.count) return
     await getExercises()
   }
 
+  useEffect(() => {
+    getExerciseInfo()
+    getExercises()
+  }, [])
+
+  const searchRef = useRef<HTMLInputElement | null>(null)
+
+  const [ musclesFilter, setMusclesFilter ] = useState<Muscles>("all")
+  const [ currentSearch, setCurrentSearch ] = useState<string>("")
+
+  const normalize = (s: string) => s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  const legsV = ["calves", "glutes", "hamstrings", "quadriceps"]
+
+  const filtered = exercises.filter((ex) => {
+    const q = normalize(currentSearch)
+    let matchesMuscles
+    if (musclesFilter === "legs") {
+      matchesMuscles = legsV.includes(normalize(ex.muscle_group))
+    } else matchesMuscles = musclesFilter == "all" || normalize(ex.muscle_group) === musclesFilter
+    const matchesSearch = normalize(ex.name).includes(q) || normalize(ex.muscle_group).includes(q) || normalize(ex.equipment).includes(q)
+    return matchesMuscles && matchesSearch
+  })
+  
+
   const overlay = (<AnimatePresence>
-    <motion.div className={portalVisible ? "portal portal-visible" : "portal"} initial={{ opacity: 0 }} animate={{ opacity: 1}} transition={{ duration: 0.1 }} onClick={() => {setPortalVisible(false)}}>
+    <motion.div key={"portal"} className={portalVisible ? "portal portal-visible" : "portal"} initial={{ opacity: 0 }} animate={{ opacity: 1}} transition={{ duration: 0.1 }} onClick={setPortalHidden}>
         <div className="exercises-portal">
           <header className="exercises-portal-h">
             <div className="dumbbell-icon">
@@ -54,10 +135,37 @@ export default function newWorkout() {
               <h2>Katalog Ćwiczeń</h2>
               <p className="greyish">Skonfiguruj swój plan i dopasuj ruchy pod cel</p>
             </div>
-            <p className="downloaded">Pobrano: { exercises.length }</p>
+            <p className="downloaded"><IconProgressDown stroke={2} /> Pobrano: { exercises.length } z { exerciseInfo?.count } </p>
           </header>
+          <div className="filter-search-con">
+            <div className="search-con">
+              <IconSearch stroke={1} />
+              <input type="text" ref={searchRef} id="search" value={currentSearch} onChange={(e) => {setCurrentSearch(e.target.value)}} placeholder="Szukaj ćwiczenia, grupy mięsniowej lub sprzętu..." />
+            </div>
+            <div className="filter-buttons">
+              <span className="muscles"><IconFilter stroke={1} /> Mięśnie: </span>
+              <button className={musclesFilter === "all" ? "muscles-button active-all" : "muscles-button"} onClick={() => {setMusclesFilter("all")}}>Wszystkie</button>
+              <button className={musclesFilter === "chest" ? "muscles-button active" : "muscles-button"} onClick={() => {setMusclesFilter("chest")}}>Klatka piersiowa</button>
+              <button className={musclesFilter === "back" ? "muscles-button active" : "muscles-button"} onClick={() => {setMusclesFilter("back")}}>Plecy</button>
+              <button className={musclesFilter === "legs" ? "muscles-button active" : "muscles-button"} onClick={() => {setMusclesFilter("legs")}}>Nogi</button>
+              <button className={musclesFilter === "shoulders" ? "muscles-button active" : "muscles-button"} onClick={() => {setMusclesFilter("shoulders")}}>Barki</button>
+              <button className={musclesFilter === "arms" ? "muscles-button active" : "muscles-button"} onClick={() => {setMusclesFilter("arms")}}>Ramiona</button>
+            </div>
+            <div className="filter-selects">
+              <select id="movement-type">
+                <option value={"all"}>Typ ruchu: Wszystkie</option>
+                <option value={"push"}>Push</option>
+                <option value={"pull"}>Pull</option>
+              </select>
+              <select id="movement-complexity">
+                <option value={"all"}>Złożoność: Wszystkie</option>
+                <option value={"compound"}>Wielostawowe</option>
+                <option value={"isolation"}>Izolowane</option>
+              </select>
+            </div>
+          </div>
           <main className="exercises">
-            { exercises.map((exercise) => (
+            { filtered.map((exercise) => (
               <div key={exercise.id} className="exercise" onClick={() => {}}>
                 <div className="exercise-left-i">
                   <div className="exercise-h-con">
@@ -76,6 +184,7 @@ export default function newWorkout() {
                 </div>
               </div>
             ))}
+            <div ref={scrollRef} style={{ minHeight: "1px", visibility: "hidden" }}>a</div>
           </main>
         </div>
       </motion.div>
@@ -119,29 +228,6 @@ export default function newWorkout() {
       { portalVisible && 
       fullScreenOverlay(overlay)
       }
-      {/* <div className={portalVisible ? "portal portal-visible" : "portal"}>
-        <div className="exercises-portal">
-          <header className="exercises-portal-h">
-            <h2>Ćwiczenia</h2>
-            <p>Pobrano: { exercises.length }</p>
-          </header>
-          <main className="exercises">
-            { exercises.map((exercise) => (
-              <div key={exercise.id} className="exercise" onClick={() => {}}>
-                <div className="exercise-left-i">
-                  <h4 className="exercise-h">{ exercise.name }</h4>
-                  <p>{ exercise.description }</p>
-                </div>
-                <div className="exercise-right-i">
-                  <p>{ exercise.muscle_group }</p>
-                  <p>Typ ruchu: { exercise.movement_type }</p>
-                  { exercise.is_compound && <p className="compound">Wielostawowe</p>}
-                </div>
-              </div>
-            ))}
-          </main>
-        </div>
-      </div> */}
     </section>
   )
 }

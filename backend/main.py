@@ -364,3 +364,11 @@ async def exercises(startId: int = Query(...)):
     "next_start_id": startId + 20,
     "exercises": e
   }
+
+@app.get("/api/exercises/info")
+async def exercisesInfo():
+  count = await fetch_all("SELECT COUNT(id) FROM exercises")
+
+  return {
+    "count": count[0].get("count")
+  }

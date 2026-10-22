@@ -276,6 +276,13 @@ main {
 
 .downloaded {
   margin: 0 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 6px 10px;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
 }
 
 .exercises {
@@ -397,4 +404,101 @@ main {
 }
 .exercise-see-more:hover {
   color: var(--accent-blue-dark);
+}
+
+.filter-search-con {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 10px;
+}
+
+.search-con {
+  position: relative;
+  width: 100%;
+} 
+
+.search-con svg {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+#search {
+  width: 100%;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  padding: 16px 32px;
+  font-size: 1rem;
+  outline: none;
+  transition: 0.3s;
+}
+#search:focus {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 10px -4px var(--accent-blue);
+}
+
+.filter-buttons {
+  display: flex;
+  gap: 16px;
+}
+
+.muscles {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 1rem;
+}
+
+.muscles svg {
+  width: 18px;
+  height: 18px;
+}
+
+.muscles-button {
+  border: none;
+  outline: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  padding: 6px 8px;
+  cursor: pointer;
+  background-color: transparent;
+  transition: 0.3s;
+}
+.muscles-button:hover {
+  background-color: var(--bg-tertiary);
+}
+.active {
+  color: #fff;
+  background-color: var(--accent-blue);
+}
+.active:hover {
+  background-color: var(--accent-blue);
+}
+.active-all {
+  color: #fff;
+  background-color: #15141d;
+}
+.active-all:hover {
+  background-color: #15141d;
+}
+
+.filter-selects {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+#movement-type, #movement-complexity {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.3s;
+}
+#movement-type:focus , #movement-complexity:focus {
+  border-color: var(--color-blue);
 }
