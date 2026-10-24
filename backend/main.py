@@ -372,3 +372,46 @@ async def exercisesInfo():
   return {
     "count": count[0].get("count")
   }
+
+class Exercises(BaseModel):
+  id: int
+  name: str
+  muscle_group: str
+  equipment: str
+  movement_type: str
+  is_compound: bool
+  description: Optional[str] = None
+  sets: int
+  reps: str
+  rest_seconds: int
+
+class Workout(BaseModel):
+  name: str
+  exercises: list[Exercises]
+
+@app.post("/saveWorkout")
+async def saveWorkout(workout: Workout, token: str = Depends(auth_scheme)):
+  if not token:
+    raise HTTPException(status_code=401, detail="Zaloguj się, aby zapisać trening")
+
+  try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+  except jwt.ExpiredSignatureError:
+    raise HTTPException(status_code=401, detail="Token wygasł", headers={"WWW-Authenticate": "Bearer"})
+  except jwt.InvalidTokenError:
+    raise HTTPException(status_code=401, detail="Nieprawidłowy token", headers={"WWW-Authenticate": "Bearer"})
+
+  user_id = payload.get('sub')
+
+  schema = await execute_get_one(
+    "INSERT INTO workout_schemas (user_id, name) VALUES (%s, %s) RETURNING id", (user_id, workout.name)
+  )
+
+  for index, exercise in enumerate(workout.exercises):
+    min_reps = exercise.reps.split("-")[0]
+    max_reps = exercise.reps.split("-")[1]
+
+    await execute(
+      """INSERT INTO workout_schema_exercises (schema_id, exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds)
+      VALUES (%s, %s, %s, %s, %s, %s, %s)""", (schema.get('id'), exercise.id, index + 1, exercise.sets, min_reps, max_reps, exercise.rest_seconds)
+    )

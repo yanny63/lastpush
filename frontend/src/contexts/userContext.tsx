@@ -1,4 +1,5 @@
 import { useContext, createContext, useCallback, type ReactNode, useState } from "react";
+const API_URL = import.meta.env.VITE_BACKEND_ADDRESS
 
 export interface UserData {
   id: string
@@ -35,7 +36,7 @@ export function UserProvider({ children }: {children: ReactNode}) {
       return null
     }
 
-    const res = await fetch("http://192.168.1.33:8000/me",{
+    const res = await fetch(`${API_URL}/me`,{
       headers: {"Authorization": `Bearer ${token}`}
     })
 

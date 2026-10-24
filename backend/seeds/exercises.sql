@@ -1,9 +1,78 @@
 -- CREATE TABLE IF NOT EXISTS exercises (
---   id SERIAL NOT NULL PRIMARY KEY,
+--   id SERIAL PRIMARY KEY,
 --   name TEXT NOT NULL,
 --   muscle_group TEXT NOT NULL,
 --   equipment TEXT NOT NULL,
 --   movement_type TEXT NOT NULL,
 --   is_compound BOOLEAN NOT NULL DEFAULT FALSE,
 --   description TEXT
+-- );
+
+-- CREATE TABLE IF NOT EXISTS workout_schemas (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+--     name TEXT NOT NULL,
+--     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+--     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+-- );
+
+-- CREATE TABLE IF NOT EXISTS workout_schema_exercises (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     schema_id UUID NOT NULL REFERENCES workout_schemas(id) ON DELETE CASCADE,
+--     exercise_id INTEGER NOT NULL REFERENCES exercises(id) ON DELETE RESTRICT,
+--     position INTEGER NOT NULL,
+--     target_sets INTEGER NOT NULL DEFAULT 3,
+--     target_reps_min INTEGER,
+--     target_reps_max INTEGER,
+--     rest_seconds INTEGER,
+--     UNIQUE (schema_id, position),
+--     CHECK (position > 0),
+--     CHECK (target_sets > 0),
+--     CHECK (target_reps_min IS NULL OR target_reps_min > 0),
+--     CHECK (target_reps_max IS NULL OR target_reps_max > 0),
+--     CHECK (target_reps_min IS NULL OR target_reps_max IS NULL OR target_reps_max >= target_reps_min),
+--     CHECK (rest_seconds IS NULL OR rest_seconds >= 0)
+-- );
+
+-- CREATE TABLE IF NOT EXISTS workouts (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+--     schema_id UUID REFERENCES workout_schemas(id) ON DELETE SET NULL,
+--     name TEXT NOT NULL,
+--     started_at TIMESTAMPTZ,
+--     ended_at TIMESTAMPTZ,
+--     status TEXT NOT NULL DEFAULT 'planned',
+--     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+--     CHECK (status IN ('in_progress', 'finished', 'planned')),
+--     CHECK (ended_at IS NULL OR started_at IS NULL OR ended_at >= started_at)
+-- );
+
+-- CREATE TABLE IF NOT EXISTS workout_exercises (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     workout_id UUID NOT NULL REFERENCES workouts(id) ON DELETE CASCADE,
+--     exercise_id INTEGER NOT NULL REFERENCES exercises(id) ON DELETE RESTRICT,
+--     position INTEGER NOT NULL,
+--     target_sets INTEGER,
+--     target_reps_min INTEGER,
+--     target_reps_max INTEGER,
+--     rest_seconds INTEGER,
+--     notes TEXT,
+--     UNIQUE (workout_id, position),
+--     CHECK (position > 0)
+-- );
+
+-- CREATE TABLE IF NOT EXISTS workout_sets (
+--     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--     workout_exercise_id UUID NOT NULL REFERENCES workout_exercises(id) ON DELETE CASCADE,
+--     set_number INTEGER NOT NULL,
+--     weight_kg NUMERIC(7, 2) NOT NULL DEFAULT 0,
+--     reps INTEGER NOT NULL,
+--     rest_seconds INTEGER,
+--     is_warmup BOOLEAN NOT NULL DEFAULT FALSE,
+--     completed BOOLEAN NOT NULL DEFAULT FALSE,
+--     UNIQUE (workout_exercise_id, set_number),
+--     CHECK (set_number > 0),
+--     CHECK (weight_kg >= 0),
+--     CHECK (reps >= 0),
+--     CHECK (rest_seconds IS NULL OR rest_seconds >= 0)
 -- );

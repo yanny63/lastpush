@@ -5,6 +5,7 @@ import { IconCheck, IconEye, IconEyeOff, IconLock, IconMail, IconMailForward, Ic
 import gsap from "gsap";
 import DrawSVGPlugin from "gsap/DrawSVGPlugin";
 import useRegConnect from "../../utils/regWs";
+const API_URL = import.meta.env.VITE_BACKEND_ADDRESS
 
 gsap.registerPlugin(DrawSVGPlugin)
 
@@ -67,7 +68,7 @@ export default function Register() {
   useRegConnect(session, email, password)
   const register = async (user: Credentials) => {
     setRegistering(true)
-    const res = await fetch("http://192.168.1.33:8000/register", {
+    const res = await fetch(`${API_URL}/register`, {
       method: "POST",
       headers: {"Content-Type": "application/json"},
       body: JSON.stringify(user)

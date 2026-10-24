@@ -1,6 +1,7 @@
 import { useSearchParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import '../../css/verify.css'
+const API_URL = import.meta.env.VITE_BACKEND_ADDRESS
 
 type Status = 'loading' | 'success' | 'error'
 
@@ -11,7 +12,7 @@ export default function Verify() {
   const token = searchParams.get('token')
 
   useEffect(() => {
-    fetch(`http://192.168.1.33:8000/verify?token=${token}`, {
+    fetch(`${API_URL}/verify?token=${token}`, {
       method: "POST"
     }).then(res => {
       if (res.ok) {

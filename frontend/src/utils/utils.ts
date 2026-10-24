@@ -1,4 +1,5 @@
 import type { UserData } from "../contexts/userContext"
+const API_URL = import.meta.env.VITE_BACKEND_ADDRESS
 
 type ApiError = {
   detail: string;
@@ -7,7 +8,7 @@ type ApiError = {
 export async function login(identifier: string, password: string, getUser: () => Promise<UserData | null>) {
   if (localStorage.getItem('access-token')) return
 
-  const res = await fetch("http://192.168.1.33:8000/login", {
+  const res = await fetch(`${API_URL}/login`, {
     method: "POST",
     headers: {"Content-Type": "application/json"},
     body: JSON.stringify({
@@ -37,7 +38,7 @@ export interface TypeProfile {
 }
 
 export async function getProfile(id: string) {
-  const res = await fetch(`http://192.168.1.33:8000/profile/${id}`)
+  const res = await fetch(`${API_URL}/profile/${id}`)
   if (!res.ok) {
     throw new Error(res.statusText)
   }
@@ -55,7 +56,7 @@ export async function friend(friend_id: string) {
   const token = localStorage.getItem('access-token')
   if (!token) return
 
-  const res = await fetch(`http://192.168.1.33:8000/friend?friend_id=${friend_id}`, {
+  const res = await fetch(`${API_URL}/friend?friend_id=${friend_id}`, {
     method: "POST",
     headers: {"Authorization": `Bearer ${token}`}
   })
@@ -70,7 +71,7 @@ export async function unfriend(friend_id: string) {
   const token = localStorage.getItem('access-token')
   if (!token) return
 
-  const res = await fetch(`http://192.168.1.33:8000/unfriend?friend_id=${friend_id}`, {
+  const res = await fetch(`${API_URL}/unfriend?friend_id=${friend_id}`, {
     method: "POST",
     headers: {"Authorization": `Bearer ${token}`}
   }) 
