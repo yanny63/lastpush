@@ -170,7 +170,7 @@ function FeatureHighlights() {
 
   return (
     <section className="home-section" aria-labelledby="home-features-title" style={{ padding: "24px 0 72px" }}>
-      <div style={{ width: "min(100% - 48px, 1040px)", margin: "0 auto" }}>
+      <div style={{ width: "calc(100% - 48px)", maxWidth: 1040, margin: "0 auto" }}>
         <div style={{ marginBottom: 28 }}>
           <p style={{ color: "var(--accent-blue)", fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>Twój trening, w dobrym rytmie</p>
           <h2 id="home-features-title" style={{ fontSize: "clamp(26px, 5vw, 38px)", letterSpacing: "-0.03em", marginTop: 8 }}>Od pierwszej serii do widocznego progresu.</h2>
