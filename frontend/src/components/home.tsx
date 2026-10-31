@@ -14,6 +14,23 @@ function FirstHomeSection({ ref }: {ref: React.RefObject<HTMLDivElement | null>}
               LastPush
             </h2>
             <p className="header-text">nigdy nie było prostsze dzięki</p>
+            <p style={{ textAlign: "center", color: "var(--text-secondary)", maxWidth: 420, lineHeight: 1.5 }}>
+              Planuj treningi, zapisuj serie i obserwuj każdy krok swojego progresu.
+            </p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginTop: 8 }}>
+              {["PLANY TRENINGOWE", "ŚLEDZENIE SERII", "TWÓJ PROGRES"].map((label) => (
+                <span key={label} style={{
+                  padding: "8px 12px",
+                  borderRadius: "var(--radius-full)",
+                  background: "var(--bg-secondary)",
+                  border: "1px solid var(--border-subtle)",
+                  color: "var(--text-secondary)",
+                  fontSize: 12,
+                  fontWeight: 600,
+                  letterSpacing: "0.04em"
+                }}>{label}</span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
