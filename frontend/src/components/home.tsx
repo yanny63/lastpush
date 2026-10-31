@@ -1,5 +1,6 @@
 import logApp from "../images/log-app.png";
 import React, { useState, useEffect, useRef } from "react";
+import { IconBarbell, IconChartBar, IconHistory } from "@tabler/icons-react";
 function FirstHomeSection({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   return (
     <section className="home-section" id="home">
@@ -14,6 +15,14 @@ function FirstHomeSection({ ref }: {ref: React.RefObject<HTMLDivElement | null>}
               LastPush
             </h2>
             <p className="header-text">nigdy nie było prostsze dzięki</p>
+            <p className="home-intro-copy">
+              Planuj treningi, zapisuj serie i obserwuj każdy krok swojego progresu.
+            </p>
+            <div className="home-feature-chips">
+              {["PLANY TRENINGOWE", "ŚLEDZENIE SERII", "TWÓJ PROGRES"].map((label) => (
+                <span key={label} className="home-feature-chip">{label}</span>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -100,7 +109,7 @@ function Plans({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   function PlansButton() {
     return (
       <button className="change-displayed-plan" onClick={handleButtonClick}>
-        <svg style={{ transform: !currentlyDisplayedFirst ? "rotate(0deg)" : "rotate(180deg)", transition: "transform 0.2s" }} 
+        <svg className={currentlyDisplayedFirst ? "plan-arrow plan-arrow-first" : "plan-arrow"} 
         xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right">
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M5 12l14 0" />
@@ -143,6 +152,37 @@ function Plans({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   )
 }
 
+function FeatureHighlights() {
+  const features = [
+    { icon: IconBarbell, number: "01", title: "Zaplanuj swój trening", text: "Układaj własne plany i trzymaj wszystkie ćwiczenia w jednym miejscu." },
+    { icon: IconHistory, number: "02", title: "Zapisuj każdą serię", text: "Notuj ciężar i powtórzenia na bieżąco — bez zgadywania przy kolejnej wizycie." },
+    { icon: IconChartBar, number: "03", title: "Zobacz, jak rośniesz", text: "Wracaj do historii i sprawdzaj, jak zmieniają się Twoje wyniki." },
+  ]
+
+  return (
+    <section className="home-section home-highlights" aria-labelledby="home-features-title">
+      <div className="home-highlights-inner">
+        <div className="home-highlights-heading">
+          <p className="home-eyebrow">Twój trening, w dobrym rytmie</p>
+          <h2 id="home-features-title" className="home-highlights-title">Od pierwszej serii do widocznego progresu.</h2>
+        </div>
+        <div className="home-feature-grid">
+          {features.map(({ icon: Icon, number, title, text }) => (
+            <article key={number} className="home-feature-card">
+              <div className="home-feature-card-top">
+                <span className="home-feature-icon"><Icon stroke={1.8} aria-hidden="true" /></span>
+                <span className="home-feature-number">{number}</span>
+              </div>
+              <h3 className="home-feature-title">{title}</h3>
+              <p className="home-feature-copy">{text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   const firstHomeRef = useRef(null)
   const plansRef = useRef(null)
@@ -168,6 +208,7 @@ export default function Home() {
   return (
     <div className="home-container">
       <FirstHomeSection ref={firstHomeRef} />
+      <FeatureHighlights />
       <Plans ref={plansRef} />
     </div>
   )

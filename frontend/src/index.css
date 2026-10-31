@@ -576,3 +576,96 @@ html, body {
     scroll-snap-align: unset;
   }
 } 
+/* Home page additions */
+.home-intro-copy {
+  max-width: 420px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  text-align: center;
+}
+.home-feature-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.home-feature-chip {
+  padding: 8px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.home-highlights {
+  padding: 24px 0 72px;
+}
+.home-highlights-inner {
+  width: calc(100% - 48px);
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.home-highlights-heading { margin-bottom: 28px; }
+.home-eyebrow {
+  color: var(--accent-blue);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.home-highlights-title {
+  margin-top: 8px;
+  font-size: clamp(26px, 5vw, 38px);
+  letter-spacing: -0.03em;
+}
+.home-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 14px;
+}
+.home-feature-card {
+  min-height: 190px;
+  padding: 22px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  background: var(--bg-secondary);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.home-feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+.home-feature-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.home-feature-icon {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: var(--radius-md);
+  color: var(--accent-blue);
+  background: var(--bg-tertiary);
+}
+.home-feature-number {
+  color: var(--text-tertiary);
+  font-size: 13px;
+  font-weight: 700;
+}
+.home-feature-title {
+  margin-bottom: 8px;
+  font-size: 18px;
+}
+.home-feature-copy {
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+.plan-arrow { transition: transform 0.2s; }
+.plan-arrow-first { transform: rotate(180deg); }
