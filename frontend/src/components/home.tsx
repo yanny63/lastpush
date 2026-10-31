@@ -15,21 +15,12 @@ function FirstHomeSection({ ref }: {ref: React.RefObject<HTMLDivElement | null>}
               LastPush
             </h2>
             <p className="header-text">nigdy nie było prostsze dzięki</p>
-            <p style={{ textAlign: "center", color: "var(--text-secondary)", maxWidth: 420, lineHeight: 1.5 }}>
+            <p className="home-intro-copy">
               Planuj treningi, zapisuj serie i obserwuj każdy krok swojego progresu.
             </p>
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginTop: 8 }}>
+            <div className="home-feature-chips">
               {["PLANY TRENINGOWE", "ŚLEDZENIE SERII", "TWÓJ PROGRES"].map((label) => (
-                <span key={label} style={{
-                  padding: "8px 12px",
-                  borderRadius: "var(--radius-full)",
-                  background: "var(--bg-secondary)",
-                  border: "1px solid var(--border-subtle)",
-                  color: "var(--text-secondary)",
-                  fontSize: 12,
-                  fontWeight: 600,
-                  letterSpacing: "0.04em"
-                }}>{label}</span>
+                <span key={label} className="home-feature-chip">{label}</span>
               ))}
             </div>
           </div>
@@ -118,7 +109,7 @@ function Plans({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   function PlansButton() {
     return (
       <button className="change-displayed-plan" onClick={handleButtonClick}>
-        <svg style={{ transform: !currentlyDisplayedFirst ? "rotate(0deg)" : "rotate(180deg)", transition: "transform 0.2s" }} 
+        <svg className={currentlyDisplayedFirst ? "plan-arrow plan-arrow-first" : "plan-arrow"} 
         xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right">
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M5 12l14 0" />
@@ -169,21 +160,21 @@ function FeatureHighlights() {
   ]
 
   return (
-    <section className="home-section" aria-labelledby="home-features-title" style={{ padding: "24px 0 72px" }}>
-      <div style={{ width: "calc(100% - 48px)", maxWidth: 1040, margin: "0 auto" }}>
-        <div style={{ marginBottom: 28 }}>
-          <p style={{ color: "var(--accent-blue)", fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>Twój trening, w dobrym rytmie</p>
-          <h2 id="home-features-title" style={{ fontSize: "clamp(26px, 5vw, 38px)", letterSpacing: "-0.03em", marginTop: 8 }}>Od pierwszej serii do widocznego progresu.</h2>
+    <section className="home-section home-highlights" aria-labelledby="home-features-title">
+      <div className="home-highlights-inner">
+        <div className="home-highlights-heading">
+          <p className="home-eyebrow">Twój trening, w dobrym rytmie</p>
+          <h2 id="home-features-title" className="home-highlights-title">Od pierwszej serii do widocznego progresu.</h2>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))", gap: 14 }}>
+        <div className="home-feature-grid">
           {features.map(({ icon: Icon, number, title, text }) => (
-            <article key={number} style={{ padding: 22, minHeight: 190, borderRadius: "var(--radius-xl)", border: "1px solid var(--border-subtle)", background: "var(--bg-secondary)", boxShadow: "var(--shadow-sm)" }}>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
-                <span style={{ display: "grid", placeItems: "center", width: 42, height: 42, borderRadius: "var(--radius-md)", color: "var(--accent-blue)", background: "var(--bg-tertiary)" }}><Icon stroke={1.8} aria-hidden="true" /></span>
-                <span style={{ color: "var(--text-tertiary)", fontSize: 13, fontWeight: 700 }}>{number}</span>
+            <article key={number} className="home-feature-card">
+              <div className="home-feature-card-top">
+                <span className="home-feature-icon"><Icon stroke={1.8} aria-hidden="true" /></span>
+                <span className="home-feature-number">{number}</span>
               </div>
-              <h3 style={{ fontSize: 18, marginBottom: 8 }}>{title}</h3>
-              <p style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>{text}</p>
+              <h3 className="home-feature-title">{title}</h3>
+              <p className="home-feature-copy">{text}</p>
             </article>
           ))}
         </div>
