@@ -1,5 +1,6 @@
 import logApp from "../images/log-app.png";
 import React, { useState, useEffect, useRef } from "react";
+import { IconBarbell, IconChartBar, IconHistory } from "@tabler/icons-react";
 function FirstHomeSection({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   return (
     <section className="home-section" id="home">
@@ -160,6 +161,37 @@ function Plans({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   )
 }
 
+function FeatureHighlights() {
+  const features = [
+    { icon: IconBarbell, number: "01", title: "Zaplanuj swój trening", text: "Układaj własne plany i trzymaj wszystkie ćwiczenia w jednym miejscu." },
+    { icon: IconHistory, number: "02", title: "Zapisuj każdą serię", text: "Notuj ciężar i powtórzenia na bieżąco — bez zgadywania przy kolejnej wizycie." },
+    { icon: IconChartBar, number: "03", title: "Zobacz, jak rośniesz", text: "Wracaj do historii i sprawdzaj, jak zmieniają się Twoje wyniki." },
+  ]
+
+  return (
+    <section className="home-section" aria-labelledby="home-features-title" style={{ padding: "24px 0 72px" }}>
+      <div style={{ width: "min(100% - 48px, 1040px)", margin: "0 auto" }}>
+        <div style={{ marginBottom: 28 }}>
+          <p style={{ color: "var(--accent-blue)", fontSize: 13, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>Twój trening, w dobrym rytmie</p>
+          <h2 id="home-features-title" style={{ fontSize: "clamp(26px, 5vw, 38px)", letterSpacing: "-0.03em", marginTop: 8 }}>Od pierwszej serii do widocznego progresu.</h2>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 240px), 1fr))", gap: 14 }}>
+          {features.map(({ icon: Icon, number, title, text }) => (
+            <article key={number} style={{ padding: 22, minHeight: 190, borderRadius: "var(--radius-xl)", border: "1px solid var(--border-subtle)", background: "var(--bg-secondary)", boxShadow: "var(--shadow-sm)" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 24 }}>
+                <span style={{ display: "grid", placeItems: "center", width: 42, height: 42, borderRadius: "var(--radius-md)", color: "var(--accent-blue)", background: "var(--bg-tertiary)" }}><Icon stroke={1.8} aria-hidden="true" /></span>
+                <span style={{ color: "var(--text-tertiary)", fontSize: 13, fontWeight: 700 }}>{number}</span>
+              </div>
+              <h3 style={{ fontSize: 18, marginBottom: 8 }}>{title}</h3>
+              <p style={{ color: "var(--text-secondary)", lineHeight: 1.5 }}>{text}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   const firstHomeRef = useRef(null)
   const plansRef = useRef(null)
@@ -185,6 +217,7 @@ export default function Home() {
   return (
     <div className="home-container">
       <FirstHomeSection ref={firstHomeRef} />
+      <FeatureHighlights />
       <Plans ref={plansRef} />
     </div>
   )
