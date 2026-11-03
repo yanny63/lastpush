@@ -183,7 +183,7 @@
 .user-profile:hover {
   background-color: var(--bg-tertiary);
 }
-
+ 
 .hover-reveal-right {
   display: flex;
   position: absolute;
@@ -235,6 +235,22 @@
 }
 .strength-points svg {
   border-radius: var(--radius-full);
+}
+
+.noti-wrapper  {
+  position: relative;
+  display: inline-flex; 
+}
+
+.notification-count {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-red);
+  border-radius: 50%;
+  border: 1.5px solid var(--color-bg, #fff); 
 }
 
 .level {
@@ -477,7 +493,7 @@
   display: flex;
   align-items: center;
 }
-
+ 
 .input-overlay {
   position: absolute;
   inset: 0;
@@ -496,18 +512,76 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  height: 55px;
+}
+
+@property --angle {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: -180deg;
+}
+
+.search-input-bg span {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.search-input-bg span::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100px;
+  width: 64px;
+  transform: translateX(0);
+  height: 100%;
+  background: linear-gradient(120deg, transparent 20%, rgba(255,255,255,0.4) 40%, rgba(255,255,255,1) 60%, rgba(255,255,255,0.4) 80%, transparent 100%);
+  z-index: 2;
+  pointer-events: none;
+  animation: shine 5s ease-out infinite;
+}
+.search-input-bg:has(.search-input:focus) span::after {
+  display: none;
+  animation: none;
+}
+
+@keyframes shine {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(calc(100% + 2000px)); 
+  }
 }
 
 .search-input {
-  width: clamp(180px, 20vw, 320px);
-  border: none;
+  width: clamp(240px, 30vw, 420px);
   outline: none;
-  background: linear-gradient(var(--border-default), var(--border-default)), linear-gradient(var(--bg-tertiary), var(--bg-tertiary));
-  background-clip: border-box, padding-box;
-  border-radius: var(--radius-md);
-  padding: 12px 16px;
+  border: 1px solid transparent;
+  background: linear-gradient(rgba(233, 233, 255, 1)) padding-box, linear-gradient(45deg, var(--border-separator)) border-box;
+  border-radius: 12px;
   font-size: 1rem;
-  transition: 0.2s;
+  height: 100%;
+  padding-inline: 16px;
+  transition: 0.3s;
+}
+
+.search-input:focus {
+  background: linear-gradient(rgba(233, 233, 255, 1)) padding-box, conic-gradient(from var(--angle), var(--accent-blue) 0deg, var(--accent-green) 24deg, var(--accent-yellow) 48deg, var(--accent-red) 72deg, transparent 96deg 360deg) border-box;
+  animation: gradientBorder 3s ease-in-out;
+}
+
+.is_done:focus {
+  background: linear-gradient(rgba(233, 233, 255, 1)) padding-box, linear-gradient(var(--accent-blue), var(--accent-blue-dark)) border-box;
+  animation: none;
+}
+
+@keyframes gradientBorder {
+  to {
+    --angle: 360deg;
+  }
 }
 
 @media (max-width: 1024px) {

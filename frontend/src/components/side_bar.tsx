@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom"
 import '../css/sidebars.css'
 import { IconSearch, IconApple, IconChartLine, IconHistory, IconTargetArrow, IconShoppingCart, IconList, IconPremiumRights } from '@tabler/icons-react';
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type AnimationEventHandler } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 
 function Logo({ xy = 200 }: {xy?: number}) {
@@ -73,6 +73,14 @@ export default function LeftSideBar() {
     return () => observer.disconnect()
   }, [])
 
+  const searchInput = useRef<HTMLInputElement | null>(null)
+
+  const animated : AnimationEventHandler<HTMLInputElement> = (e) => {
+    if (e.animationName === "gradientBorder") {
+      searchInput.current!.classList.add("is_done")
+    }
+  }
+
   return (
     <div ref={ref} className="left-side-main">
       <div className="left-side">
@@ -119,8 +127,8 @@ export default function LeftSideBar() {
             <Dialog.Content onClick={(e) => {
             if (e.currentTarget === e.target)  setSearchInputOpen(false)}} className="input-content">
               <div className="search-input-bg">
-                <input type="text" id="search-input" className="search-input" />
-              </div> 
+                <span><input type="text" id="search-input" className="search-input" ref={searchInput} onAnimationEnd={animated} /></span>
+              </div>  
             </Dialog.Content>
           </Dialog.Overlay>
         </Dialog.Portal>

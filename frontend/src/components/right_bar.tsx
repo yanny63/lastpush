@@ -3,6 +3,7 @@ import { IconUser, IconQuestionMark, IconBell, IconUsers, IconX, IconShoppingCar
 import { AnimatePresence, motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import useUser from "../contexts/userContext"
+import { setUpProfile } from "../utils/utils"
 
 function Elo() {
   const [ eloAnimated, setEloAnimated ] = useState<boolean>(false) 
@@ -144,10 +145,20 @@ function UserProfile() {
 
 function Notifications() {
   const [ open, setOpen ] = useState<boolean>(false)
+  const [ notifications, setNotifications ] = useState(0)
+
+  useEffect(() => {
+    let n = 0
+    if (setUpProfile()) n++
+    setNotifications(n)
+  }, [])
   return (
     <>
       <div className="notifications" onClick={() => {setOpen(prev => !prev)}}>
-        <IconBell stroke={2} />
+        <div className="noti-wrapper">
+          <IconBell stroke={2} />
+          { notifications > 0 && <div className="notification-count"></div>}
+        </div>
         <div className="hover-reveal-right">
           <span className="hover-reveal-text">Powiadomienia</span>
         </div>

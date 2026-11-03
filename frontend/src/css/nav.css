@@ -7,10 +7,6 @@
   z-index: 50;
 }
 
-.top-zero {
-  top: 0;
-}
-
 .nav-top-notifications {
   background-color: var(--accent-blue);
   font-weight: 600;

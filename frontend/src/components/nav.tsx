@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "motion/react"
 import { createPortal } from "react-dom"
 import "../css/nav.css"
 import { IconArrowNarrowRight, IconBell, IconUser, IconX } from "@tabler/icons-react"
-import { setUpProfile } from "../utils/utils"
 import useUser from "../contexts/userContext"
 
 function Nav({ navVisibleRef }: {navVisibleRef: React.RefObject<boolean>}) {
@@ -92,25 +91,10 @@ function Nav({ navVisibleRef }: {navVisibleRef: React.RefObject<boolean>}) {
     )
   }
 
-  const notSetUp = setUpProfile()
-
   const { user } = useUser()
 
   return (
-    <div className={notSetUp ? "nav top-zero" : "nav"}>
-        { notSetUp && 
-        <div className="nav-top-notifications">
-          <div className="set-up-profile">
-            <div className="set-up-profile-inner">
-              <span>Dodaj zdjęcie i dane, by inni Cię rozpoznali -&nbsp;</span>
-              <Link to={`/profile/${user?.id}`} className="set-up-profile-link">
-                Uzupełnij profil
-                <IconArrowNarrowRight stroke={2} className="link-arrow" />
-              </Link>
-              <IconX stroke={2} className="notification-close" />
-            </div>
-          </div>
-        </div>}
+    <div className={"nav"}>
       <div className={["nav-container", !navVisibleRef.current && "nav-not-visible", !scrolled && !isOpen && "nav-not-scrolled",].filter(Boolean).join(" ")}>
         <div className="nav-links" style={user ? {width: "100%"} : {}}>
           <Link to={"/"} className="nav-link">Strona Główna</Link>
