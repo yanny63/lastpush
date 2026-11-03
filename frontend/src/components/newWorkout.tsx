@@ -15,7 +15,7 @@ interface Exercise {
   is_compound: boolean,
   description?: string,
   sets?: number,
-  reps?: string
+  reps?: string,
   rest_seconds?: number
 }
 
@@ -51,7 +51,7 @@ export default function newWorkout() {
       const data = await res.json()
       const e : Array<Exercise> = data.exercises 
       setExercises(prev => [...prev, ...e])
-      setCurrentId(prev => prev + 20)
+      setCurrentId(data.next_start_id)
     }
     catch (e) {
       console.log("Nie udało się pobrać ćwiczeń")
@@ -63,16 +63,22 @@ export default function newWorkout() {
 
   const navigate = useNavigate()
 
+  const [ error, setError ] = useState("")
   async function submitWorkout(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const token = localStorage.getItem("access-token")
+    if (!token) {
+      setError("Zaloguj się, aby utworzyć trening")
+      return
+    }
     try {
-      const res = await fetch(`${API_URL}/saveWorkout`, {
+      const res = await fetch(`${API_URL}/workout`, {
         method: "POST",
         headers: {"Authorization": `Bearer ${token}`, "Content-Type": "application/json"},
         body: JSON.stringify({
           name: workoutName,
-          exercises: selectedExercises
+          exercises: selectedExercises,
+          when: when
         })
       })
       if (!res.ok) {
@@ -83,7 +89,10 @@ export default function newWorkout() {
       setWorkoutName("")
       navigate("/trening", )
     } catch (e) {
-      
+      setError("Błąd podczas zapisywania treningu, spróbuj ponownie")
+      setTimeout(() => {
+        setError("")
+      }, 5000);
     }
   }
 
@@ -138,12 +147,18 @@ export default function newWorkout() {
     getExercises()
   }, [])
 
+  useEffect(() => {
+    console.log(exercises)
+    console.log(currentId)
+  }, [exercises])
+
   const searchRef = useRef<HTMLInputElement | null>(null)
 
   const [ selectedExercises, setSelectedExercises ] = useState<Array<Exercise>>([])
 
   function addExercise(exercise: Exercise) {
-    setSelectedExercises(prev => [...prev, exercise])
+    setSelectedExercises(prev => 
+      prev.some(e => e.id === exercise.id) ? prev : [...prev, exercise])
   }
 
   function removeExercise(exercise: Exercise) {
@@ -174,6 +189,9 @@ export default function newWorkout() {
     "cable": "Wyciąg",
     "machine": "Maszyny"
   }
+
+  const [ when, setWhen ] = useState<number | null>(null)
+  const w = ["Pn", "Wt", "Śr", "Czw", "Pt", "Sob", "Nd"]
 
   const normalize = (s: string | undefined) => (s ?? "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
   const legsV = ["calves", "glutes", "hamstrings", "quadriceps"]
@@ -428,6 +446,18 @@ export default function newWorkout() {
             ))}
             <button className="add-exercise" onClick={changePortalVisibility}>+ Dodaj ćwiczenie</button>
           </div>
+          <p>Kiedy wykonujesz ten trening?</p>
+          <div className="when">
+            { w.map((d, i) => (
+              <span key={i} className={when === i + 1 ? "when-d d-s" : "when-d"} onClick={() => {setWhen(i + 1)}}>
+                { d }
+              </span>
+            ))}
+          </div>
+          { error && 
+          <div className="error-s">
+            <p>{ error }</p>
+          </div>}
           <div className="estimated-time-save">
             <div className="estimated-con">
               <p>SZACOWANY CZAS</p>

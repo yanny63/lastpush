@@ -1,85 +1,3 @@
-:root {
-  --color-blue: #007AFF;
-  --color-green: #34C759;
-  --color-indigo: #5856D6;
-  --color-orange: #FF9500;
-  --color-pink: #FF2D55;
-  --color-purple: #AF52DE;
-  --color-red: #FF3B30;
-  --color-teal: #5AC8FA;
-  --color-yellow: #FFCC00;
-  --color-mint: #00C7BE;
-  --color-brown: #A2845E;
-  --color-cyan: #32ADE6;
- 
-  --accent-graphite: #8E8E93;
-  --accent-red: #FF3B30;
-  --accent-orange: #FF9500;
-  --accent-yellow: #FFCC00;
-  --accent-green: #34C759;
-  --accent-blue: #007AFF;
-  --accent-purple: #AF52DE;
-  --accent-pink: #FF2D55;
-  
-  --accent-blue-light: #5AB0FF;
-  --accent-blue-soft: #E8F4FF;
-  --accent-blue-muted: #B9DEFF;
-  --accent-blue-dark: #005FCC;
-  --accent-blue-deep: #003F87;
-
-  --profile-cover-default: linear-gradient(135deg, #003F87 0%, #007AFF 52%, #5AB0FF 100%);
-  --profile-cover-dark: linear-gradient(135deg, #001B3A 0%, #005FCC 55%, #0A84FF 100%);
-  --profile-cover-soft: linear-gradient(135deg, #E8F4FF 0%, #B9DEFF 52%, #5AB0FF 100%);
-
-  --gray-50: #F9F9FB;
-  --gray-100: #F2F2F7;
-  --gray-200: #E5E5EA;
-  --gray-300: #D1D1D6;
-  --gray-400: #C7C7CC;
-  --gray-500: #AEAEB2;
-  --gray-600: #8E8E93;
-  --gray-700: #636366;
-  --gray-800: #48484A;
-  --gray-900: #3A3A3C;
-  --gray-950: #1C1C1E;
- 
-  --bg-primary: #FFFFFF;
-  --bg-secondary: #F2F2F7;
-  --bg-tertiary: #E5E5EA;
-  --bg-elevated: #FFFFFF;
- 
-  --text-primary: #000000;
-  --text-secondary: rgba(60, 60, 67, 0.6);
-  --text-tertiary: rgba(60, 60, 67, 0.3);
-  --text-quaternary: rgba(60, 60, 67, 0.18);
- 
-  --separator: rgba(60, 60, 67, 0.29);
-  --separator-opaque: #C6C6C8;
-  --border-subtle: rgba(0, 0, 0, 0.08);
- 
-  --material-ultra-thin: rgba(255, 255, 255, 0.5);
-  --material-thin: rgba(255, 255, 255, 0.7);
-  --material-regular: rgba(255, 255, 255, 0.85);
-  --material-thick: rgba(255, 255, 255, 0.95);
- 
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --radius-xl: 20px;
-  --radius-full: 9999px;
- 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
- 
-  --border-subtle: rgba(0, 0, 0, 0.06);
-  --border-default: rgba(0, 0, 0, 0.1);
-  --border-strong: rgba(0, 0, 0, 0.16);
-  --border-separator: rgba(60, 60, 67, 0.29);
- 
-  --font-system: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-}
-
 .newWorkout-s {
   align-items: center;
   flex-direction: column;
@@ -88,7 +6,7 @@
   gap: 20px;
   opacity: 1;
   transform: none;
-  width: clamp(420px, 80vw, 820px);
+  width: clamp(400px, 80vw, 820px);
 }
 
 .newWorkout-h {
@@ -274,13 +192,14 @@ main {
   background-color: #15141d;
   border: none;
   border-radius: 12px;
+  min-height: 43px;
   outline: none;
   color: #fff;
   overflow: hidden;
   transition: 0.3s;
 }
 .add-exercise:hover {
-  background-color: var(--accent-blue-dark);
+  background-color: #0c0c11;;
 }
 .add-exercise::after {
   content: "";
@@ -296,6 +215,44 @@ main {
 }
 .add-exercise:hover::after {
   width: 0;
+}
+
+.error-s {
+  width: 100%;
+  padding: 12px;
+  color: var(--color-red);
+  background-color: rgba(255, 59, 48, 0.2);
+  border: 1px solid var(--color-red);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.when {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.when-d {
+  text-align: center;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  cursor: pointer;
+  padding-block: 6px;
+  width: 100%;
+  transition: 0.3s;
+}
+.when-d:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.d-s {
+  border-color: var(--color-blue);
+  background-color: var(--accent-blue-muted);
+  color: var(--color-blue);
+}
+.d-s:hover {
+  background-color: var(--accent-blue-muted);
 }
 
 @keyframes animateS {

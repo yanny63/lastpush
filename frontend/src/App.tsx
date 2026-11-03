@@ -12,6 +12,8 @@ const Verify = lazy(() => import("./components/auth/verify"))
 const Profile = lazy(() => import("./components/profile"))
 const Trening = lazy(() => import("./components/trening"))
 const NewWorkout = lazy(() => import("./components/newWorkout"))
+const WorkoutStart = lazy(() => import("./components/workoutStart"))
+const Workout = lazy(() => import("./components/workout"))
 import useUser from "./contexts/userContext"
 
 export default function App() {
@@ -57,6 +59,8 @@ export default function App() {
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/trening" element={<Trening />} />
             <Route path="/newWorkout" element={<NewWorkout />} />
+            <Route path="/workout/:id/start" element={<WorkoutStart />} />
+            <Route path="/workout/:id/session/:session" element={<Workout />} />
           </Routes>
         </main>
         <RightBar />

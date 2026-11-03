@@ -85,6 +85,10 @@ export async function unfriend(friend_id: string) {
 // NOTIFICATIONS 
 
 export function getNotifications() {
-
+  
 }
 
+export function parseDay(int: number) {
+  const days = ["Poniedziałek", "Wtorek", "Środa", "Czwartek", "Piątek", "Sobota", "Niedziela"]
+  return days[int - 1]
+}
