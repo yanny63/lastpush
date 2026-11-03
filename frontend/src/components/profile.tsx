@@ -7,7 +7,6 @@ import DrawSVGPlugin from "gsap/DrawSVGPlugin";
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getProfile, type TypeProfile, friend, unfriend } from "../utils/utils";
-// import { Dialog } from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 
 gsap.registerPlugin(DrawSVGPlugin)

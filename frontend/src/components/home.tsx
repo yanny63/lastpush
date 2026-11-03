@@ -10,13 +10,11 @@ function FirstHomeSection({ ref }: {ref: React.RefObject<HTMLDivElement | null>}
             <span>Zainstaluj na Android/iOS</span>
           </a>
           <div className="home-header">
-            <p className="header-text">Zapisywanie treningów</p>
-            <h2 className="header-gradient">
-              LastPush
-            </h2>
-            <p className="header-text">nigdy nie było prostsze dzięki</p>
+            <p className="home-hero-kicker">TRENINGI, KTÓRE MASZ POD KONTROLĄ</p>
+            <h1 className="header-gradient">LastPush</h1>
+            <p className="home-hero-title">Zapisuj treningi.<br />Wracaj silniejszy.</p>
             <p className="home-intro-copy">
-              Planuj treningi, zapisuj serie i obserwuj każdy krok swojego progresu.
+              Plany, serie i historia treningów — uporządkowane w jednym miejscu.
             </p>
             <div className="home-feature-chips">
               {["PLANY TRENINGOWE", "ŚLEDZENIE SERII", "TWÓJ PROGRES"].map((label) => (
@@ -36,7 +34,7 @@ function FirstHomeSection({ ref }: {ref: React.RefObject<HTMLDivElement | null>}
 function Plans({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   const plans = [
     {type: 'Standard', price: '0zł', length: 'na zawsze', features: ["Tworzenie treningów", "Zapisywanie serii", "Podstawowa historia", "Podstawowe statystyki", "Część gotowych planów"], buttonText: 'Załóż darmowe konto'},
-    {type: 'Premium', price: '20zł', length: 'miesięcznie', features: ["Zaawansowane wykresy", "PR i analiza progresu", "Automatyczne sugerowanie ciężaru", "Dieta", "Nieograniczone plany", "Regeneracja", "Szczegółowe statystyki"], buttonText: 'Wybróbuj za darmo'}
+    {type: 'Premium', price: '20zł', length: 'miesięcznie', features: ["Zaawansowane wykresy", "PR i analiza progresu", "Automatyczne sugerowanie ciężaru", "Dieta", "Nieograniczone plany", "Regeneracja", "Szczegółowe statystyki"], buttonText: 'Wypróbuj za darmo'}
   ]
 
   const [ currentlyDisplayedFirst, setCurrentlyDisplayedFirst ] = useState<boolean>(true)
@@ -109,8 +107,8 @@ function Plans({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   function PlansButton() {
     return (
       <button className="change-displayed-plan" onClick={handleButtonClick}>
-        <svg className={currentlyDisplayedFirst ? "plan-arrow plan-arrow-first" : "plan-arrow"} 
-        xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" className="icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right">
+        <svg className={`icon icon-tabler icons-tabler-outline icon-tabler-arrow-narrow-right plan-arrow${currentlyDisplayedFirst ? " plan-arrow-first" : ""}`} 
+        xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
           <path stroke="none" d="M0 0h24v24H0z" fill="none" />
           <path d="M5 12l14 0" />
           <path d="M5 12l4 4" />
@@ -183,6 +181,36 @@ function FeatureHighlights() {
   )
 }
 
+function TrainingFlow() {
+  const steps = [
+    { number: "01", title: "Wybierz plan", text: "Otwórz swój zestaw ćwiczeń i zacznij od pierwszego ruchu." },
+    { number: "02", title: "Zapisz serię", text: "Dodaj ciężar i powtórzenia, zanim przejdziesz dalej." },
+    { number: "03", title: "Wróć do historii", text: "Przy następnym treningu sprawdź, na czym skończyłeś." },
+  ]
+
+  return (
+    <section className="home-section home-flow" aria-labelledby="home-flow-title">
+      <div className="home-highlights-inner">
+        <div className="home-flow-heading">
+          <p className="home-eyebrow">Prosty rytm</p>
+          <h2 id="home-flow-title" className="home-highlights-title">Mniej pamiętania. Więcej trenowania.</h2>
+        </div>
+        <div className="home-flow-grid">
+          {steps.map((step) => (
+            <article className="home-flow-step" key={step.number}>
+              <span className="home-flow-number">{step.number}</span>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   const firstHomeRef = useRef(null)
   const plansRef = useRef(null)
@@ -209,6 +237,7 @@ export default function Home() {
     <div className="home-container">
       <FirstHomeSection ref={firstHomeRef} />
       <FeatureHighlights />
+      <TrainingFlow />
       <Plans ref={plansRef} />
     </div>
   )
