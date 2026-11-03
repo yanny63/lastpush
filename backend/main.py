@@ -323,8 +323,6 @@ async def profile(id: str, token = Depends(auth_scheme)):
   except psycopg2.DataError:
     raise HTTPException(status_code=404)
 
-  print(profile)
-
   return profile
 
 @app.post("/friend")
@@ -357,11 +355,11 @@ async def unfriend(token = Depends(auth_scheme), friend_id: str = Query(...)):
 async def exercises(startId: int = Query(...)):
   limit = 20
   e = await fetch_all("SELECT * FROM exercises WHERE id > %s ORDER BY id ASC LIMIT %s", (startId, limit))
-
+  
   return {
     "limit": 20,
     "current_start_id": startId,
-    "next_start_id": startId + 20,
+    "next_start_id": e[-1]["id"] if e else startId,
     "exercises": e
   }
 
@@ -388,8 +386,9 @@ class Exercises(BaseModel):
 class Workout(BaseModel):
   name: str
   exercises: list[Exercises]
+  when: Optional[int] = None
 
-@app.post("/saveWorkout")
+@app.post("/workout")
 async def saveWorkout(workout: Workout, token: str = Depends(auth_scheme)):
   if not token:
     raise HTTPException(status_code=401, detail="Zaloguj się, aby zapisać trening")
@@ -407,6 +406,11 @@ async def saveWorkout(workout: Workout, token: str = Depends(auth_scheme)):
     "INSERT INTO workout_schemas (user_id, name) VALUES (%s, %s) RETURNING id", (user_id, workout.name)
   )
 
+  if workout.when:
+    await execute(
+      "INSERT INTO workout_schedule_days (schema_id, weekday) VALUES (%s, %s)", (schema.get('id'), workout.when)
+    )
+
   for index, exercise in enumerate(workout.exercises):
     min_reps = exercise.reps.split("-")[0]
     max_reps = exercise.reps.split("-")[1]
@@ -415,3 +419,202 @@ async def saveWorkout(workout: Workout, token: str = Depends(auth_scheme)):
       """INSERT INTO workout_schema_exercises (schema_id, exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds)
       VALUES (%s, %s, %s, %s, %s, %s, %s)""", (schema.get('id'), exercise.id, index + 1, exercise.sets, min_reps, max_reps, exercise.rest_seconds)
     )
+
+@app.get("/workouts")
+async def workouts(token: str = Depends(auth_scheme)):
+  if not token:
+    raise HTTPException(status_code=401, detail="Zaloguj się, aby zobaczyć swoje treningi")
+
+  try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+  except jwt.ExpiredSignatureError:
+    raise HTTPException(status_code=401, detail="Token wygasł", headers={"WWW-Authenticate": "Bearer"})
+  except jwt.InvalidTokenError:
+    raise HTTPException(status_code=401, detail="Nieprawidłowy token", headers={"WWW-Authenticate": "Bearer"})
+
+  user_id = payload.get('sub')
+
+  workouts = await fetch_all(
+    """SELECT * FROM workout_schemas WHERE user_id = %s""", (user_id,)
+  )
+
+  for w in workouts:
+    exercises = await fetch_all(
+      """SELECT e.name AS exercise_name, wse.position, wse.target_sets, wse.rest_seconds
+      FROM workout_schema_exercises AS wse 
+      LEFT JOIN exercises AS e ON e.id = wse.exercise_id
+      WHERE wse.schema_id = %s""", (w.get("id"),)
+    )
+
+    weekdays = await fetch_all(
+      "SELECT weekday FROM workout_schedule_days WHERE schema_id = %s", (w.get('id'),)
+    )
+
+    w["exercises"] = list(exercises)
+    w["weekdays"] = list(weekdays)
+
+    currentDay = datetime.now().weekday() + 1
+
+    nextWorkout = await fetch_one(
+      """SELECT w.id, w.name, w.created_at, w.updated_at, d.weekday FROM workout_schedule_days AS d
+      LEFT JOIN workout_schemas AS w ON w.id = d.schema_id
+      WHERE weekday >= %s AND w.user_id = %s""", (currentDay, user_id)
+    )
+
+    if not nextWorkout:
+      nextWorkout = await fetch_one(
+        """SELECT w.id, w.name, w.created_at, w.updated_at, d.weekday FROM workout_schedule_days AS d
+        LEFT JOIN workout_schemas AS w ON w.id = d.schema_id
+        WHERE user_id = %s ORDER BY d.weekday ASC LIMIT 1""", (user_id,)
+      )
+
+    print(nextWorkout)
+
+  return {
+    "workout": workouts,
+    "next_workout": nextWorkout
+  }
+
+async def get_workout_data(workout_id: str, user_id: str):
+  workout = await fetch_one(
+    """SELECT w.id, w.name, wd.weekday
+    FROM workout_schemas AS w
+    LEFT JOIN workout_schedule_days AS wd ON wd.schema_id = w.id
+    WHERE w.id = %s AND w.user_id = %s""", (workout_id, user_id))
+
+  if not workout:
+    return None
+
+  exercises = await fetch_all(
+    """SELECT e.id, e.name AS exercise_name, e.image_url, e.muscle_group, we.position, we.target_sets, we.target_reps_min, we.target_reps_max, we.rest_seconds
+      FROM workout_schema_exercises AS we
+      LEFT JOIN exercises AS e ON e.id = we.exercise_id
+      WHERE we.schema_id = %s
+      ORDER BY we.position""", (workout_id,)
+  )
+
+  workout["exercises"] = exercises
+  
+  return workout
+
+@app.get("/workout/{workout_id}")
+async def w(workout_id: str, token: str = Depends(auth_scheme)):
+  try: 
+    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+  except jwt.ExpiredSignatureError:
+    raise HTTPException(status_code=401, detail="Token wygasł", headers={"WWW-Authenticate": "Bearer"})
+  except jwt.InvalidTokenError:
+    raise HTTPException(status_code=401, detail="Nieprawidłowy token", headers={"WWW-Authenticate": "Bearer"})
+
+  user_id = payload.get("sub")
+
+  workout = await get_workout_data(workout_id, user_id)
+  if not workout:
+    raise HTTPException(status_code=404, detail="Nie znaleziono treningu")
+  
+  return workout
+
+@app.get("/session/{session_id}")
+async def find_workout(session_id: str, token: str = Depends(auth_scheme)):
+  try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+  except jwt.ExpiredSignatureError:
+    raise HTTPException(status_code=401, detail="Token wygasł", headers={"WWW-Authenticate:" "Bearer"})
+  except jwt.InvalidTokenError:
+    raise HTTPException(status_code=401, detail="Nieprawidłowy token", headers={"WWW-Authenticate:" "Bearer"})
+
+  user_id = payload.get("sub")
+
+  session = await fetch_one(
+    """SELECT w.id, w.name AS workout_name, w.started_at, w.status
+    FROM workouts AS w 
+    
+    WHERE w.schema_id = %s AND w.user_id = %s AND w.status = 'in_progress'""", (session_id, user_id)
+  )
+
+  workout = await get_workout_data(session_id, user_id)
+
+  if not workout:
+    raise HTTPException(status_code=404, detail="Nie znaleziono szablonu treningu")
+
+  exercises = await fetch_all(
+    """SELECT e.id, ex.name AS exercise_name, ex.muscle_group, e.position, e.notes, e.rest_seconds, e.target_reps_min, e.target_reps_max, e.target_sets, ex.image_url
+    FROM workout_exercises AS e
+    LEFT JOIN exercises AS ex ON ex.id = e.exercise_id 
+    WHERE workout_id = %s""", (session["id"],)
+  )
+
+  for e in exercises:
+    sets = await fetch_all(
+      """SELECT * FROM workout_sets WHERE workout_exercise_id = %s""", (e["id"],)
+    )
+    e["sets"] = sets
+ 
+  session["exercises"] = exercises
+  session["weekday"] = workout["weekday"]
+  session["schema_id"] = workout["id"]
+
+  return session
+
+@app.post("/session")
+async def new_session(schema_id: str = Query(...), name: str = Query(...), token: str = Depends(auth_scheme)):
+  try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+  except jwt.ExpiredSignatureError:
+    raise HTTPException(status_code=401, detail="Token wygasł", headers={"WWW-Authenticate:" "Bearer"})
+  except jwt.InvalidTokenError:
+    raise HTTPException(status_code=401, detail="Nieprawidłowy token", headers={"WWW-Authenticate:" "Bearer"})
+
+  user_id = payload.get("sub")
+
+  session = await execute_get_one(
+    """INSERT INTO workouts (user_id, schema_id, name, status) VALUES (%s, %s, %s, 'in_progress') RETURNING id""", (user_id, schema_id, name)
+  )
+
+  workout = await get_workout_data(schema_id, user_id)
+  
+  if not workout:
+    raise HTTPException(status_code=404, detail="Nie znaleziono szablonu treningu")
+
+  exercises = [] 
+  for e in workout["exercises"]:
+    ex = {}
+    ex["workout_id"] = session["id"]
+    ex["exercise_id"] = e["id"]
+    ex["position"] = e["position"]
+    ex["target_sets"] = e["target_sets"]
+    ex["target_reps_min"] = e["target_reps_min"]
+    ex["target_reps_max"] = e["target_reps_max"]
+    ex["rest_seconds"] = e["rest_seconds"]
+
+    e_ = await execute_get_one(
+      """INSERT INTO workout_exercises (workout_id, exercise_id, position, target_sets, target_reps_min, target_reps_max, rest_seconds) VALUES (%s, %s, %s, %s, %s, %s, %s) RETURNING id""", 
+      (ex["workout_id"], ex["exercise_id"], ex["position"], ex["target_sets"], ex["target_reps_min"], ex["target_reps_max"], ex["rest_seconds"])
+    )
+    ex["id"] = e_.get("id")
+    exercises.append(ex)
+
+  session["exercises"] = exercises
+  session["weekday"] = workout["weekday"]
+
+  for e in session["exercises"]:
+    sets = []
+    for s in range(e.get("target_sets", 0)):
+      se = {}
+      set_number = s + 1
+      reps = e.get("target_reps_min", 8)
+      completed = False
+      weight = 0
+      set_id = await execute_get_one(
+        """INSERT INTO workout_sets (workout_exercise_id, set_number, reps) VALUES (%s, %s, %s) RETURNING id""", (e["id"], set_number, reps)
+      )
+      se["set_number"] = set_number
+      se["reps"] = reps
+      se["completed"] = completed
+      se["weight"] = weight
+      se["set_id"] = set_id.get("id")
+
+      sets.append(se)
+    e["sets"] = sets
+
+  return session

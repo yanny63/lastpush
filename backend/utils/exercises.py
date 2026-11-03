@@ -25,7 +25,8 @@ def insertExercises():
     muscle_group,
     equipment,
     movement_type,
-    is_compound
+    is_compound,
+    image_url
   ) VALUES %s"""
 
   try:
@@ -37,7 +38,8 @@ def insertExercises():
             exercise["muscle_group"],
             exercise["equipment"],
             exercise["movement_type"],
-            exercise["is_compound"]
+            exercise["is_compound"],
+            exercise["image_url"]
           )
           for exercise in exercises
         ]

@@ -5,6 +5,7 @@
 --   equipment TEXT NOT NULL,
 --   movement_type TEXT NOT NULL,
 --   is_compound BOOLEAN NOT NULL DEFAULT FALSE,
+--   image_url TEXT NOT NULL,
 --   description TEXT
 -- );
 
@@ -75,4 +76,16 @@
 --     CHECK (weight_kg >= 0),
 --     CHECK (reps >= 0),
 --     CHECK (rest_seconds IS NULL OR rest_seconds >= 0)
+-- );
+
+-- CREATE TABLE IF NOT EXISTS  workout_schedule_days (
+--     schema_id UUID NOT NULL REFERENCES workout_schemas(id) ON DELETE CASCADE,
+--     weekday SMALLINT NOT NULL
+--     CHECK (weekday BETWEEN 1 AND 7),
+--     PRIMARY KEY (schema_id, weekday)
+-- );
+
+-- CREATE TABLE IF NOT EXISTS advices (
+--   id UUID NOT NULL DEFAULT gen_random_uuid(),
+--   advice TEXT NOT NULL
 -- );
