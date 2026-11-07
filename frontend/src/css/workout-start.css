@@ -81,6 +81,7 @@
 }
 
 .w-s-s {
+  display: flex;
   opacity: 1;
   align-items: start;
   justify-content: start;

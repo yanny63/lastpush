@@ -3,11 +3,12 @@ import { useLocation } from "react-router-dom"
 import { calculateDuration, type Workout, get_most_common, equipment_photos, getExerciseLabel , type WorkoutSession, type ExerciseSet } from "../utils/workout"
 import { ReturnTo, WorkoutLogo } from "./shared"
 import "../css/workout.css"
-import { IconArrowNarrowLeft, IconBarbell, IconBulb, IconCalendar, IconCheck, IconChevronRight, IconClock, IconClockPlay, IconHelpCircle, IconLogs, IconMaximize, IconPlayerPause, IconPlayerPlay, IconTargetArrow } from "@tabler/icons-react"
+import { IconArrowNarrowLeft, IconBarbell, IconBulb, IconCalendar, IconCheck, IconChevronRight, IconClock, IconFlag, IconHelpCircle, IconLogs, IconMaximize, IconPlayerPause, IconPlayerPlay, IconStack2, IconTargetArrow, IconX } from "@tabler/icons-react"
 import { parseDay } from "../utils/utils"
-import gsap from "gsap"
 import { useNavigate } from "react-router-dom"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion, scale } from "framer-motion"
+import * as Dialog from '@radix-ui/react-dialog'
+const API_URL = import.meta.env.VITE_BACKEND_ADDRESS
 
 export default function Workout() {
   const navigate = useNavigate()
@@ -21,6 +22,7 @@ export default function Workout() {
 	const [ tab, setTab ] = useState(0)
   const [ setsCount, setSetsCount ] = useState(0)
   const [ restEndsAt, setRestEndsAt ] = useState<number | null>(null)
+  const [ ascretain, setAscertain ] = useState(false)
   const startTime = useRef<number | null>(null)
   const elapsedTime = useRef(0)
   const sectionRef = useRef<HTMLElement | null>(null)
@@ -163,6 +165,21 @@ export default function Workout() {
   const exercisesCount = workout?.exercises.length ?? 0
 
   const progress = exercisesCount > 0 ? Math.round(completedExercises / exercisesCount * 100) : 0
+
+  async function endWorkout() {
+    const token = localStorage.getItem("access-token")
+    try {
+      const res = await fetch(`${API_URL}/session/${workout?.id}`, {
+        method: "PATCH",
+        headers: {"Content-Type": "application/json", "Authorization": `Bearer ${token}`},
+        body: JSON.stringify({
+          exercises: workout?.exercises,
+          finished: true
+        })
+      })
+      if (!res.ok) alert("")
+    } catch (e) {}
+  }
 
   return (
     <section className="session-section container" ref={sectionRef}>
@@ -337,12 +354,12 @@ export default function Workout() {
 					</div>
 
           <footer className="exercise-footer">
-            <button className="previous-b" onClick={() => {handleNext_Previous(false)}}>
+            <button className="previous-b" disabled={currentExercise - 1 === 0} onClick={() => {handleNext_Previous(false)}}>
               <IconArrowNarrowLeft stroke={2} width={16} height={16} />
               Poprzednie
             </button>
-            <span>{ exerciseSetsCompleted() } z 3 serii ukończone</span>
-            <button className="next-b" onClick={() => {handleNext_Previous(true)}}>
+            <span>{ exerciseSetsCompleted() } z { workout.exercises[currentExercise - 1].sets.length } serii ukończone</span>
+            <button className="next-b" disabled={currentExercise === Number(workout?.exercises.length)} onClick={() => {handleNext_Previous(true)}}>
               Następne ćwiczenie
               <IconChevronRight stroke={2} width={16} height={16} />
             </button>
@@ -413,11 +430,61 @@ export default function Workout() {
 							<strong>~{ calculateDuration(workout) }min</strong>
 						</div>
           </section>
+
+          <button className="finish-workout" onClick={() => {setAscertain(true)}}>
+            <IconFlag stroke={2} width={22} height={22} />
+            <span>Zakończ trening</span>
+          </button>
         </aside>
       </main>
 			</>
 			:
       <></>}
+      <Dialog.Root open={ascretain}>
+        <AnimatePresence>
+          { ascretain && 
+            <Dialog.Portal forceMount>
+              <Dialog.Overlay asChild forceMount>
+                <motion.div className="d-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}></motion.div>
+              </Dialog.Overlay>
+              <div className="dialog-wrapper">
+                <Dialog.Content className="d-content" asChild forceMount>
+                  <motion.div initial={{ transform: "scale(0.95)", opacity: 0 }} 
+                  animate={{ transform: "scale(0.95)", opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+                    <header className="d-header">
+                      <Dialog.Close className="dialog-close" onClick={() => {setAscertain(false)}}>
+                        <IconX stroke={2} />
+                      </Dialog.Close>
+                      <div className="d-flag">
+                        <IconFlag stroke={2} width={32} height={32} />
+                      </div>
+                      <div className="d-i-h">
+                        <h2>Zakończyć trening?</h2>
+                        <p>Świetna robota! Zanim zakończysz, sprawdź swoje postępy</p>
+                      </div>
+                    </header>
+                    <main>
+                      <div className="x">
+                        <IconBarbell stroke={2} width={32} height={32} />
+                        <strong>{ completedExercises } / { workout?.exercises.length }</strong>
+                        <span>Ukończone ćwiczenia</span>
+                      </div>
+                      <div className="x">
+                        <IconStack2 stroke={2} width={32} height={32} />
+                        <strong>{ completedSets() } / { setsCount }</strong>
+                        <span>Ukończone serie</span>
+                      </div>
+                    </main>
+                    <footer>
+                      <button className="e" onClick={endWorkout}>Zakończ trening</button>
+                      <button className="r" onClick={() => {setAscertain(false)}}>Wróć do treningu</button>
+                    </footer>
+                  </motion.div>
+                </Dialog.Content>
+              </div>
+            </Dialog.Portal>}
+        </AnimatePresence>
+      </Dialog.Root>
     </section>
   )
 }

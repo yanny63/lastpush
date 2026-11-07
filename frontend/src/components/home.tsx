@@ -4,7 +4,7 @@ import { IconBarbell, IconChartBar, IconHistory } from "@tabler/icons-react";
 function FirstHomeSection({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   return (
     <section className="home-section" id="home">
-      <div ref={ref} className="container">
+      <div ref={ref} className="home-page container">
         <div className="header-btn-container">
           <a className="download-button" download={""}>
             <span>Zainstaluj na Android/iOS</span>
@@ -119,11 +119,11 @@ function Plans({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   }
 
   return (
-    <section className="home-section" id="home-plans">
+    <section className="home-section home-flow" id="home-plans">
       <div className="plans-container container" ref={ref}>
         <div className="plans-header-container">
-          <h2 className="plans-header">Wybierz plan idealny dla siebie</h2>
-          <p className="plans-subheader">Przejdź na wyższy poziom i odblokuj pełne możliwości.</p>
+          <p className="home-eyebrow">Przejdź na wyższy poziom i odblokuj pełne możliwości.</p>
+          <h2 className="home-highlights-title">Wybierz plan idealny dla siebie</h2>
         </div>
         <div className="plans-mobile" ref={plansRef}> 
           <div className="plans"> 
@@ -150,7 +150,7 @@ function Plans({ ref }: {ref: React.RefObject<HTMLDivElement | null>}) {
   )
 }
 
-function FeatureHighlights() {
+function FeatureHighlights({ ref }: { ref: React.RefObject<HTMLDivElement | null> }) {
   const features = [
     { icon: IconBarbell, number: "01", title: "Zaplanuj swój trening", text: "Układaj własne plany i trzymaj wszystkie ćwiczenia w jednym miejscu." },
     { icon: IconHistory, number: "02", title: "Zapisuj każdą serię", text: "Notuj ciężar i powtórzenia na bieżąco — bez zgadywania przy kolejnej wizycie." },
@@ -159,7 +159,7 @@ function FeatureHighlights() {
 
   return (
     <section className="home-section home-highlights" aria-labelledby="home-features-title">
-      <div className="home-highlights-inner">
+      <div ref={ref} className="home-highlights-inner first container">
         <div className="home-highlights-heading">
           <p className="home-eyebrow">Twój trening, w dobrym rytmie</p>
           <h2 id="home-features-title" className="home-highlights-title">Od pierwszej serii do widocznego progresu.</h2>
@@ -181,7 +181,7 @@ function FeatureHighlights() {
   )
 }
 
-function TrainingFlow() {
+function TrainingFlow({ ref }: { ref: React.RefObject<HTMLDivElement | null> }) {
   const steps = [
     { number: "01", title: "Wybierz plan", text: "Otwórz swój zestaw ćwiczeń i zacznij od pierwszego ruchu." },
     { number: "02", title: "Zapisz serię", text: "Dodaj ciężar i powtórzenia, zanim przejdziesz dalej." },
@@ -190,7 +190,7 @@ function TrainingFlow() {
 
   return (
     <section className="home-section home-flow" aria-labelledby="home-flow-title">
-      <div className="home-highlights-inner">
+      <div ref={ref} className="home-highlights-inner container">
         <div className="home-flow-heading">
           <p className="home-eyebrow">Prosty rytm</p>
           <h2 id="home-flow-title" className="home-highlights-title">Mniej pamiętania. Więcej trenowania.</h2>
@@ -214,6 +214,8 @@ function TrainingFlow() {
 export default function Home() {
   const firstHomeRef = useRef(null)
   const plansRef = useRef(null)
+  const featureRef = useRef(null)
+  const flowRef = useRef(null)
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -230,14 +232,20 @@ export default function Home() {
     if (plansRef.current) {
       observer.observe(plansRef.current)
     }
+    if (featureRef.current) {
+      observer.observe(featureRef.current)
+    }
+    if (flowRef.current) {
+      observer.observe(flowRef.current)
+    }
 
     return () => observer.disconnect()
   }, [])
   return (
     <div className="home-container">
       <FirstHomeSection ref={firstHomeRef} />
-      <FeatureHighlights />
-      <TrainingFlow />
+      <FeatureHighlights ref={featureRef} />
+      <TrainingFlow ref={flowRef} />
       <Plans ref={plansRef} />
     </div>
   )

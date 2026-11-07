@@ -10,13 +10,14 @@ from psycopg2.extras import RealDictCursor
 from psycopg2.errors import UniqueViolation
 import dotenv
 import os
-from pydantic import EmailStr, BaseModel, ValidationError
+from pydantic import EmailStr, BaseModel, ValidationError, Field
 from utils.passwords import Passwords
 import jwt
 from datetime import datetime, timedelta, timezone
 import secrets
 import hashlib
 from typing import Optional
+from uuid import UUID
 
 dotenv.load_dotenv()
 
@@ -47,7 +48,7 @@ app.mount("/uploads", StaticFiles(directory="images"), name="uploads")
 
 auth_scheme = OAuth2PasswordBearer(tokenUrl='token', auto_error=False)
 
-conn_pool =  pool.SimpleConnectionPool(
+conn_pool = pool.SimpleConnectionPool(
   minconn=1,
   maxconn=10,
   host='localhost',
@@ -514,8 +515,8 @@ async def w(workout_id: str, token: str = Depends(auth_scheme)):
   
   return workout
 
-@app.get("/session/{session_id}")
-async def find_workout(session_id: str, token: str = Depends(auth_scheme)):
+@app.get("/session/{schema_id}")
+async def find_workout(schema_id: str, token: str = Depends(auth_scheme)):
   try:
     payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
   except jwt.ExpiredSignatureError:
@@ -529,10 +530,10 @@ async def find_workout(session_id: str, token: str = Depends(auth_scheme)):
     """SELECT w.id, w.name AS workout_name, w.started_at, w.status
     FROM workouts AS w 
     
-    WHERE w.schema_id = %s AND w.user_id = %s AND w.status = 'in_progress'""", (session_id, user_id)
+    WHERE w.schema_id = %s AND w.user_id = %s AND w.status = 'in_progress'""", (schema_id, user_id)
   )
 
-  workout = await get_workout_data(session_id, user_id)
+  workout = await get_workout_data(schema_id, user_id)
 
   if not workout:
     raise HTTPException(status_code=404, detail="Nie znaleziono szablonu treningu")
@@ -618,3 +619,51 @@ async def new_session(schema_id: str = Query(...), name: str = Query(...), token
     e["sets"] = sets
 
   return session
+
+class SessionSet(BaseModel):
+  id: UUID
+  completed: bool = False
+  reps: int = Field(default=0, ge=0)
+  weight_kg: float = Field(default=0, ge=0)
+  rest_seconds: int | None = Field(default=None, ge=0)
+  is_warmup: bool = False
+  completed_at: datetime | None = None
+
+class SessionExercise(BaseModel):
+  id: UUID
+  sets: list[SessionSet]
+
+class SessionUpdate(BaseModel):
+  exercises: list[SessionExercise]
+  finished: bool = False
+
+@app.patch("/session/{session_id}")
+async def finish_session(session_id: str, session: SessionUpdate, token: str = Depends(auth_scheme)):
+  try:
+    payload = jwt.decode(token, SECRET_KEY, algorithms=["HS256"])
+  except jwt.ExpiredSignatureError:
+    raise HTTPException(status_code=401, detail="Token wygasł", headers={"WWW-Authenticate:" "Bearer"})
+  except jwt.InvalidTokenError:
+    raise HTTPException(status_code=401, detail="Nieprawidłowy token", headers={"WWW-Authenticate:" "Bearer"})
+
+  user_id = payload.get('sub')
+  conn = conn_pool.getconn()
+
+  with conn.cursor(cursor_factory=RealDictCursor) as cur:
+    try:
+      if session.finished:
+        cur.execute(
+          """UPDATE workouts SET status = %s, ended_at = now() WHERE id = %s""", ('finished', session_id)
+        )
+      for exercise in session.exercises:
+        for set in exercise.sets:
+          cur.execute(
+            """UPDATE workout_sets SET weight_kg = %s, reps = %s, rest_seconds = %s, completed = %s, completed_at = %s WHERE id = %s""", 
+            (set.weight_kg, set.reps, set.rest_seconds, set.completed, set.completed_at, str(set.id))
+          )
+      conn.commit()
+    except:
+      conn.rollback()
+      raise
+    finally:
+      conn_pool.putconn(conn)
