@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from "framer-motion"
 import { Link } from "react-router-dom"
 import useUser from "../contexts/userContext"
 import { setUpProfile } from "../utils/utils"
+import { Circle } from "./shared"
 
 function Elo() {
   const [ eloAnimated, setEloAnimated ] = useState<boolean>(false) 
@@ -34,14 +35,6 @@ function Elo() {
 
 function UserProfile() {
   const { user, logout } = useUser()
-
-  function Circle() {
-    return (
-      <svg height={16} width={16} style={{ borderRadius: 'var(--radius-full)' }}>
-        <circle r={8} cx={8} cy={8} fill="var(--color-green)" />
-      </svg>
-    )
-  }
 
   const [ open, setOpen ] = useState<boolean>(false)
   const handleClick = () => {

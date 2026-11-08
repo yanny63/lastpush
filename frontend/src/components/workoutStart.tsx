@@ -146,7 +146,7 @@ export default function WorkoutStart() {
           <div className="w-d-bs">
             <p className="w-d"> { /* workout note/description */ } </p>
             <div className="w-bs">
-              <button className="b-s">
+              <button className="b-s" onClick={() => {startExercise("1")}}>
                 <IconPlayerPlay stroke={2} fill="#fff" color="#fff" />
                 Rozpocznij trening
               </button>

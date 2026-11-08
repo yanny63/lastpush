@@ -24,3 +24,11 @@ export function WorkoutLogo() {
     </div>
   )
 }
+
+export function Circle() {
+  return (
+    <svg height={16} width={16} style={{ borderRadius: 'var(--radius-full)' }}>
+      <circle r={8} cx={8} cy={8} fill="var(--color-green)" />
+    </svg>
+  )
+}

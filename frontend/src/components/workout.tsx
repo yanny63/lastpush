@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react"
-import { useLocation } from "react-router-dom"
+import { Link, useLocation, useSearchParams } from "react-router-dom"
 import { calculateDuration, type Workout, get_most_common, equipment_photos, getExerciseLabel , type WorkoutSession, type ExerciseSet } from "../utils/workout"
 import { ReturnTo, WorkoutLogo } from "./shared"
 import "../css/workout.css"
-import { IconArrowNarrowLeft, IconBarbell, IconBulb, IconCalendar, IconCheck, IconChevronRight, IconClock, IconFlag, IconHelpCircle, IconLogs, IconMaximize, IconPlayerPause, IconPlayerPlay, IconStack2, IconTargetArrow, IconX } from "@tabler/icons-react"
+import { IconArrowNarrowLeft, IconBarbell, IconBulb, IconCalendar, IconCheck, IconChevronRight, IconClock, IconFlag, IconHelpCircle, IconHome, IconLogs, IconMaximize, IconPlayerPause, IconPlayerPlay, IconStack2, IconTarget, IconTargetArrow, IconX } from "@tabler/icons-react"
 import { parseDay } from "../utils/utils"
 import { useNavigate } from "react-router-dom"
-import { AnimatePresence, motion, scale } from "framer-motion"
+import { AnimatePresence, motion } from "framer-motion"
 import * as Dialog from '@radix-ui/react-dialog'
 const API_URL = import.meta.env.VITE_BACKEND_ADDRESS
 
@@ -14,6 +14,7 @@ export default function Workout() {
   const navigate = useNavigate()
 
   const { state } = useLocation()
+  const [params] = useSearchParams()
 
   const [ workout, setWorkout ] = useState<WorkoutSession | null>(null)
   const [ mostCommon, setMostCommon ] = useState<string | null>(null)
@@ -23,11 +24,23 @@ export default function Workout() {
   const [ setsCount, setSetsCount ] = useState(0)
   const [ restEndsAt, setRestEndsAt ] = useState<number | null>(null)
   const [ ascretain, setAscertain ] = useState(false)
+  const [ finished, setFinished ] = useState(false)
+  const [ workoutDuration, setWorkoutDuration ] = useState(0)
   const startTime = useRef<number | null>(null)
   const elapsedTime = useRef(0)
   const sectionRef = useRef<HTMLElement | null>(null)
+  const stepsRef = useRef<HTMLDivElement | null>(null)
 
   const [ currentExercise, setCurrentExercise ] = useState(1)
+
+  useEffect(() => {
+    if (!window.matchMedia("(max-width: 1024px)").matches) return
+    const steps = stepsRef.current
+    const selected = steps?.querySelector<HTMLElement>('[aria-current="step"]')
+    if (!steps || !selected) return
+    steps.scrollTo({ left: selected.offsetLeft - steps.offsetLeft - (steps.clientWidth - selected.offsetWidth) / 2 })
+  }, [currentExercise, workout])
+
 
   useEffect(() => {
     if (!sectionRef.current) return
@@ -42,8 +55,12 @@ export default function Workout() {
   useEffect(() => {
     if (!state) return
     setWorkout(state.workout)
-    console.log(state.workout)
   }, [])
+
+  useEffect(() => {
+    if (!params.get("position")) return
+    setCurrentExercise(Number(params.get("position")))
+  }, [params])
 
   useEffect(() => {
     if (!sessionState) return
@@ -85,8 +102,18 @@ export default function Workout() {
     setSetsCount(s)
   }, [workout])
 
+  useEffect(() => {
+    if (!finished) return
+    setWorkoutDuration(seconds)
+  }, [finished])
+
+  // const hours = Math.floor(seconds / 3600)
   const minutes = Math.floor(seconds / 60)
   const sec = seconds % 60
+
+  const h = Math.floor(workoutDuration / 3600)
+  const m = Math.floor(workoutDuration / 60)
+  const s = workoutDuration % 60
 
   async function animateExit() {
     sectionRef.current?.classList.add("session-exit")
@@ -162,6 +189,16 @@ export default function Workout() {
     return workout?.exercises[currentExercise - 1].sets.filter(set => set.completed).length ?? 0
   } 
 
+  const volume = () => {
+    let v = 0
+    workout?.exercises.forEach((e) => {
+      e.sets.forEach((s) => {
+        v += (s.weight_kg ?? 0) * (s.reps ?? 0)
+      })
+    })
+    return v
+  }
+
   const exercisesCount = workout?.exercises.length ?? 0
 
   const progress = exercisesCount > 0 ? Math.round(completedExercises / exercisesCount * 100) : 0
@@ -177,12 +214,64 @@ export default function Workout() {
           finished: true
         })
       })
-      if (!res.ok) alert("")
+      if (!res.ok) {
+        throw new Error("")
+      }
+      setFinished(true)
     } catch (e) {}
   }
 
   return (
     <section className="session-section container" ref={sectionRef}>
+      { finished ? 
+      <>
+      <div className="workout-finished-container">
+        <div className="workout-finished-top">
+          <div className="workout-par"></div>
+          <div className="workout-finished-icon">
+            <IconCheck stroke={3} width={44} height={44} />
+          </div>
+          <h2>Trening ukończony!</h2>
+          <p>Świetna robota!</p>
+          <div className="workout-finished-stats">
+            <div className="workout-finished-stat">
+              <IconClock stroke={2} />
+              <span>
+                <strong>{ String(h).padStart(2, "0") }:{ String(m).padStart(2, "0") }:{ String(s).padStart(2, "0") }</strong>
+                Całkowity czas
+              </span>
+            </div>
+            <div className="workout-finished-stat">
+              <IconBarbell stroke={2} />
+              <span>
+                <strong>{ completedExercises } / { workout?.exercises.length }</strong> 
+                Ćwiczenia
+              </span>
+            </div>
+            <div className="workout-finished-stat">
+              <IconStack2 stroke={2} />
+              <span>
+                <strong> { completedSets() } / { setsCount }</strong>
+                Serie
+              </span>
+            </div>
+            <div className="workout-finished-stat">
+              <IconTarget stroke={2} />
+              <span>
+                <strong>{ volume() } kg</strong>
+                Objętość
+              </span>
+            </div>
+          </div>
+        </div>
+        <Link to={"/"} className="workout-finished-home">
+          <IconHome stroke={2} />
+          Gotowe
+        </Link>
+      </div>
+      </>
+      :
+      <>
       { workout ? 
       <>
 			<header className="session-header">
@@ -226,9 +315,9 @@ export default function Workout() {
             <span className="bold">Twój trening, krok po kroku</span>
             <span>{ "Ćwiczenie " + currentExercise + " z " + workout.exercises.length }</span>
           </div>
-          <div className="exercise-steps">
+          <div className="exercise-steps" ref={stepsRef}>
             { workout.exercises.map((e) => (
-              <button key={e.position} className={ currentExercise === Number(e.position) ? "exercise-step selected" : "exercise-step"} onClick={() => {setCurrentExercise(Number(e.position))}}>
+              <button key={e.position} aria-label={`Ćwiczenie ${e.position}: ${e.exercise_name}`} aria-current={currentExercise === Number(e.position) ? "step" : undefined} className={ currentExercise === Number(e.position) ? "exercise-step selected" : "exercise-step"} onClick={() => {setCurrentExercise(Number(e.position))}}>
                 <div className="step-number">{ e.position }</div>
                 <p className="step-name">{ e.exercise_name }</p>
               </button>
@@ -317,10 +406,10 @@ export default function Workout() {
                       { workout.exercises[currentExercise - 1].sets.map((set) => (
                         <tr className={set.completed ? "set-row completed" : "set-row"} key={set.id}>
                           <td className="set-number"><span>{ set.set_number }</span></td>
-                          <td><input className="set-weight" readOnly={set.completed} type="number" min={0} max={1000} value={set.weight_kg ?? ""} onChange={(e) => {setSet(set.id, "weight_kg", e.target.value === "" ? undefined : Number(e.target.value))}} /></td>
-                          <td><input className="set-reps" readOnly={set.completed} type="number" min={1} max={500} value={set.reps ?? ""} onChange={(e) => {setSet(set.id, "reps", e.target.value === "" ? undefined : Number(e.target.value))}} /></td>
+                          <td><input className="set-weight" inputMode="decimal" aria-label={`Ciężar w kg, seria ${set.set_number}`} readOnly={set.completed} type="number" min={0} max={1000} value={set.weight_kg ?? ""} onChange={(e) => {setSet(set.id, "weight_kg", e.target.value === "" ? undefined : Number(e.target.value))}} /></td>
+                          <td><input className="set-reps" inputMode="numeric" aria-label={`Powtórzenia, seria ${set.set_number}`} readOnly={set.completed} type="number" min={1} max={500} value={set.reps ?? ""} onChange={(e) => {setSet(set.id, "reps", e.target.value === "" ? undefined : Number(e.target.value))}} /></td>
                           <td>
-                            <button className="set-check" disabled={set.completed} onClick={() => {completeSet(set.id)}}>
+                            <button className="set-check" aria-label={`Ukończ serię ${set.set_number}`} disabled={set.completed} onClick={() => {completeSet(set.id)}}>
                               <IconCheck stroke={2} />
                             </button>
                           </td>
@@ -440,6 +529,8 @@ export default function Workout() {
 			</>
 			:
       <></>}
+      </>
+      }
       <Dialog.Root open={ascretain}>
         <AnimatePresence>
           { ascretain && 
@@ -447,7 +538,7 @@ export default function Workout() {
               <Dialog.Overlay asChild forceMount>
                 <motion.div className="d-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}></motion.div>
               </Dialog.Overlay>
-              <div className="dialog-wrapper">
+              <div className="dialog-wrapper workout-dialog-wrapper">
                 <Dialog.Content className="d-content" asChild forceMount>
                   <motion.div initial={{ transform: "scale(0.95)", opacity: 0 }} 
                   animate={{ transform: "scale(0.95)", opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>

@@ -369,3 +369,138 @@
 .b-o:hover svg {
   translate: 2px;
 }
+
+/* Mobile overrides stay scoped to the training overview. */
+@media (max-width: 1024px) {
+  .trening-main-con.container {
+    width: 100%;
+    max-width: 820px;
+    gap: 48px;
+  }
+
+  .trening-main-con .workouts-i {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .trening-main-con :is(.trening-header, .workouts-h, .n-t-h) {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .trening-main-con :is(.t-header-l, .t-header-l-w, .t-inner > div, .w, .w-m) {
+    min-width: 0;
+  }
+
+  .trening-main-con :is(h1, h2, h3, h4, .w-m, .t-footer-element) {
+    overflow-wrap: anywhere;
+  }
+
+  .trening-main-con :is(.blue-bg, .t-svg, .w-svg, .b-o svg) {
+    flex-shrink: 0;
+  }
+
+  .trening-main-con .w-h {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .trening-main-con :is(.button, .create-workout-plan, .w-svg, .b-o) {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .trening-main-con .ws {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .trening-main-con.container {
+    padding-inline: 16px;
+    padding-bottom: max(32px, env(safe-area-inset-bottom));
+    gap: 32px;
+  }
+
+  .trening-main-con .t-header-l-w {
+    gap: 12px;
+  }
+
+  .trening-main-con :is(.trening-header, .workouts-h) h1 {
+    font-size: 1.6rem;
+  }
+
+  .trening-main-con .workouts-h .t-header-r {
+    width: 100%;
+  }
+
+  .trening-main-con .workouts-h .button {
+    width: 100%;
+  }
+
+  .trening-main-con .blue-bg {
+    padding: 12px;
+  }
+
+  .trening-main-con .s {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+    padding-block: 16px;
+  }
+
+  .trening-main-con .s-t {
+    min-width: 0;
+    padding: 12px 6px;
+    overflow-wrap: anywhere;
+    font-size: 0.8rem;
+  }
+
+  .trening-main-con .s-t h2 {
+    font-size: 1.4rem;
+  }
+
+  .trening-main-con :is(.t, .w) {
+    padding: 16px;
+  }
+
+  .trening-main-con .t-inner {
+    flex-wrap: wrap;
+  }
+
+  .trening-main-con .t-inner > div:not(.blue-bg) {
+    flex: 1 1 130px;
+  }
+
+  .trening-main-con .t-inner h2 {
+    font-size: 1.2rem;
+  }
+
+  .trening-main-con :is(.t-inner .greyish, .n-t-h, .w-f) {
+    font-size: 0.85rem;
+  }
+
+  .trening-main-con .w-f {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .trening-main-con .trening-main > .greyish {
+    text-align: center;
+    line-height: 1.5;
+  }
+
+  .trening-main-con .trening-footer {
+    padding-top: 24px;
+  }
+
+  .trening-main-con .trening-f-inner {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+    gap: 12px;
+    text-align: center;
+    font-size: 0.8rem;
+  }
+}
