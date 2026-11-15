@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useRef, useState } from "react"
 import '../../css/register.css'
-import { IconCheck, IconEye, IconEyeOff, IconLock, IconMail, IconMailForward, IconUser, IconX } from "@tabler/icons-react";
+import { IconArrowNarrowRight, IconCheck, IconEye, IconEyeOff, IconLock, IconMail, IconMailForward, IconUser, IconX } from "@tabler/icons-react";
 import gsap from "gsap";
 import DrawSVGPlugin from "gsap/DrawSVGPlugin";
 import useRegConnect from "../../utils/regWs";
@@ -21,6 +21,17 @@ interface Error {
   detail: string
 }
 
+export function Google({ w = 24, h = 24 }: {w?: number, h?: number}) { 
+    return (
+      <img
+        src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google/default.svg"
+        alt="Google"
+        width={w}
+        height={h}
+      />
+    )
+  }
+
 export default function Register() {
   const [ chosenType, setChosenType ] = useState<AuthType>("email")
   const [ nickname, setNickname ] = useState<string>("")
@@ -32,17 +43,6 @@ export default function Register() {
   const [ hasMinLength, setHasMinLength ] = useState<boolean>(false)
   const [ hasSpecialChar, setHasSpecialChar ] = useState<boolean>(false)
   const [ containsUppercase, setContainsUppercase ] = useState<boolean>(false)
-
-  function Google() { 
-    return (
-      <img
-        src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google/default.svg"
-        alt="Google"
-        width="24"
-        height="24"
-      />
-    )
-  }
 
   const validate = (e: React.ChangeEvent<HTMLInputElement>) => {
     const password = e.target.value
@@ -168,18 +168,22 @@ export default function Register() {
       <motion.div initial={{ opacity: 1 }} animate={{ opacity: 1 }} exit={{ opacity: 0, transform: 'translateX(-80px)' }} transition={{ duration: 0.3 }}>
       <div className="register-left-side">
         <div className="register-header">
+          <div className="register-user">
+            <IconUser stroke={2} width={32} height={32} />
+          </div>
           <h2>Załóż konto</h2>
+          <p>Utwórz konto i zacznij korzystać z LastPush</p>
         </div>
         <div className="register-type">
           <div className="type" onClick={() => (setChosenType("email"))}>
             { chosenType === "email" &&
             <motion.div className="type-background" layoutId="type-bg" transition={{ type: 'spring' , stiffness: 800, damping: 80 }}/>}
-            <span className="type-text">Emailem</span>
+            <span className="type-text"><IconMail width={22} height={22} stroke={2} color="var(--accent-blue)" /> Emailem</span>
           </div>
           <div className="type" onClick={() => (setChosenType("google"))}>
             { chosenType === "google" &&
             <motion.div className="type-background" layoutId="type-bg" transition={{ type: 'spring', stiffness: 800, damping: 80 }}/>}
-            <span className="type-text">Googlem</span>
+            <span className="type-text"><Google w={20} h={20} /> Googlem</span>
           </div>
         </div>
         <div className="register-form">
@@ -220,13 +224,13 @@ export default function Register() {
                   <span className="requirement">
                     <AnimatePresence mode="wait">
                       { hasMinLength ? 
-                      <motion.div key={'check'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
+                      <motion.div style={{ borderRadius: "50%", padding: "4px" }} key={'check'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ background: "#E5F8EA", transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
                       exit={{ transform: 'rotate(-45deg) scale(0.95)', opacity: 0 }} transition={{ duration: 0.2 }}>
-                        <IconCheck stroke={2} color="#34C759" />
+                        <IconCheck width={16} height={16} stroke={2} color="#34C759" />
                       </motion.div> :
-                      <motion.div key={'x'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
+                      <motion.div style={{ borderRadius: "50%", padding: "4px" }} key={'x'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ background: "#FFE4E8", transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
                       exit={{ transform: 'rotate(-45deg) scale(0.95)', opacity: 0 }} transition={{ duration: 0.2 }}>
-                        <IconX stroke={2} color="#FF3B30" />
+                        <IconX width={16} height={16} stroke={2} color="#FF3B30" />
                       </motion.div>}
                     </AnimatePresence>
                     <span>Minimum 8 znaków</span>
@@ -234,13 +238,13 @@ export default function Register() {
                   <span className="requirement">
                     <AnimatePresence mode="wait">
                       { hasSpecialChar ? 
-                      <motion.div key={'check'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
+                      <motion.div style={{ borderRadius: "50%", padding: "4px" }} key={'check'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ background: "#E5F8EA", transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
                       exit={{ transform: 'rotate(-45deg) scale(0.95)', opacity: 0 }} transition={{ duration: 0.2 }}>
-                        <IconCheck stroke={2} color="#34C759" />
+                        <IconCheck width={16} height={16} stroke={2} color="#34C759" />
                       </motion.div> :
-                      <motion.div key={'x'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
+                      <motion.div style={{ borderRadius: "50%", padding: "4px" }} key={'x'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ background: "#FFE4E8", transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
                       exit={{ transform: 'rotate(-45deg) scale(0.95)', opacity: 0 }} transition={{ duration: 0.2 }}>
-                        <IconX stroke={2} color="#FF3B30" />
+                        <IconX width={16} height={16} stroke={2} color="#FF3B30" />
                       </motion.div>}
                     </AnimatePresence>
                     <span>Minimum 1 znak specjalny</span>
@@ -248,13 +252,13 @@ export default function Register() {
                   <span className="requirement">
                     <AnimatePresence mode="wait">
                       { containsUppercase ? 
-                      <motion.div key={'check'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
+                      <motion.div style={{ borderRadius: "50%", padding: "4px" }} key={'check'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ background: "#E5F8EA", transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
                       exit={{ transform: 'rotate(-45deg) scale(0.95)', opacity: 0 }} transition={{ duration: 0.2 }}>
-                        <IconCheck stroke={2} color="#34C759" />
+                        <IconCheck width={16} height={16} stroke={2} color="#34C759" />
                       </motion.div> :
-                      <motion.div key={'x'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
+                      <motion.div style={{ borderRadius: "50%", padding: "4px" }} key={'x'} initial={{ transform: 'rotate(45deg) scale(0.95)', opacity: 0 }} animate={{ background: "#FFE4E8", transform: 'rotate(0deg) scale(1)', opacity: 1 }} 
                       exit={{ transform: 'rotate(-45deg) scale(0.95)', opacity: 0 }} transition={{ duration: 0.2 }}>
-                        <IconX stroke={2} color="#FF3B30" />
+                        <IconX width={16} height={16} stroke={2} color="#FF3B30" />
                       </motion.div>}
                     </AnimatePresence>
                     <span>Minimum 1 dużą literę</span>

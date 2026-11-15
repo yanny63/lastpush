@@ -6,21 +6,11 @@ import '../../css/login.css'
 import { login } from "../../utils/utils"
 import useUser from "../../contexts/userContext"
 import { useNavigate } from "react-router-dom"
+import { Google } from "./register" 
 
 export default function Login() {
   const { getUser } = useUser()
   const navigate = useNavigate()
-
-  function Google() {
-    return (
-      <img
-        src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google/default.svg"
-        alt="Google"
-        width="24"
-        height="24"
-      />
-    )
-  }
 
   type AuthType = "username" | "email" | "google"
 
@@ -56,6 +46,9 @@ export default function Login() {
     <div className="login-container">
       <div className="login-left">
         <header className="login-header">
+          <div className="register-user">
+            <IconUser stroke={2} width={32} height={32} />
+          </div>
           <h2>Wróć do swojej formy</h2>
           <p>Zaloguj się, sprawdź swój plan i zrób kolejny krok do celu</p>
         </header>
@@ -63,17 +56,17 @@ export default function Login() {
           <div className="type" onClick={() => (setChosenType("username"))}>
             { chosenType === "username" &&
             <motion.div className="type-background" layoutId="type-bg" transition={{ type: 'spring' , stiffness: 800, damping: 80 }}/>}
-            <span className="type-text">Nazwą</span>
+            <span className="type-text"><IconUser stroke={2} width={22} height={22} color="var(--color-blue)" /> Nazwą</span>
           </div>
           <div className="type" onClick={() => (setChosenType("email"))}>
             { chosenType === "email" &&
             <motion.div className="type-background" layoutId="type-bg" transition={{ type: 'spring' , stiffness: 800, damping: 80 }}/>}
-            <span className="type-text">Emailem</span>
+            <span className="type-text"><IconMail width={22} height={22} stroke={2} color="var(--accent-blue)" /> Emailem</span>
           </div>
           <div className="type" onClick={() => (setChosenType("google"))}>
             { chosenType === "google" &&
             <motion.div className="type-background" layoutId="type-bg" transition={{ type: 'spring', stiffness: 800, damping: 80 }}/>}
-            <span className="type-text">Googlem</span>
+            <span className="type-text"><Google w={20} h={20} /> Googlem</span>
           </div>
         </div>
 
@@ -86,14 +79,14 @@ export default function Login() {
                   <IconUser stroke={2} />
                   <span>Nazwa Użytkownika</span>  
                 </span>
-                <input type="text" id="username" placeholder="" className="input" value={username} onChange={(e) => {setUsername(e.target.value)}} required />
+                <input type="text" id="username" placeholder="" className="form-input" value={username} onChange={(e) => {setUsername(e.target.value)}} required />
               </div>
               <div className="input-border">
                 <span className="input-placeholder">
                   <IconLock stroke={2} />
                   <span>Hasło</span>  
                 </span>
-                <input type={passwordShown ? 'text' : 'password'} id="password" placeholder="" className="input" value={password} onChange={(e) => {setPassword(e.target.value)}} required />
+                <input type={passwordShown ? 'text' : 'password'} id="password" placeholder="" className="form-input" value={password} onChange={(e) => {setPassword(e.target.value)}} required />
                 { passwordShown ? <IconEyeOff stroke={2} className="password-icon" onClick={() => (setPasswordShown(false))} /> 
                   : <IconEye stroke={2} className="password-icon" onClick={() => (setPasswordShown(true))} /> }
                 </div>
@@ -119,14 +112,14 @@ export default function Login() {
                   <IconMail stroke={2} />
                   <span>Email</span>  
                 </span>
-                <input type="email" id="email" placeholder="" className="input" value={email} onChange={(e) => {setEmail(e.target.value)}} required />
+                <input type="email" id="email" placeholder="" className="form-input" value={email} onChange={(e) => {setEmail(e.target.value)}} required />
               </div>
               <div className="input-border">
                 <span className="input-placeholder">
                   <IconLock stroke={2} />
                   <span>Hasło</span>  
                 </span>
-                <input type={passwordShown ? 'text' : 'password'} id="password" placeholder="" className="input" value={password} onChange={(e) => {setPassword(e.target.value)}} required />
+                <input type={passwordShown ? 'text' : 'password'} id="password" placeholder="" className="form-input" value={password} onChange={(e) => {setPassword(e.target.value)}} required />
                 { passwordShown ? <IconEyeOff stroke={2} className="password-icon" onClick={() => (setPasswordShown(false))} /> 
                   : <IconEye stroke={2} className="password-icon" onClick={() => (setPasswordShown(true))} /> }
                 </div>
