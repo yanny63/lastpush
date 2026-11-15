@@ -76,6 +76,12 @@
   color: var(--text-primary);
 }
 
+@media (max-width: 460px) {
+  .type-text span {
+    display: none;
+  }
+}
+
 .login-form {
   display: flex;
   flex-direction: column;
@@ -246,4 +252,4 @@
   .login-left {
     padding: 40px;
   }
-}
+} 

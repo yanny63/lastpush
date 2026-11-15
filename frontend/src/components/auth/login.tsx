@@ -56,17 +56,17 @@ export default function Login() {
           <div className="type" onClick={() => (setChosenType("username"))}>
             { chosenType === "username" &&
             <motion.div className="type-background" layoutId="type-bg" transition={{ type: 'spring' , stiffness: 800, damping: 80 }}/>}
-            <span className="type-text"><IconUser stroke={2} width={22} height={22} color="var(--color-blue)" /> Nazwą</span>
+            <span className="type-text"><IconUser stroke={2} width={22} height={22} color="var(--color-blue)" /><span>Nazwą</span></span>
           </div>
           <div className="type" onClick={() => (setChosenType("email"))}>
             { chosenType === "email" &&
             <motion.div className="type-background" layoutId="type-bg" transition={{ type: 'spring' , stiffness: 800, damping: 80 }}/>}
-            <span className="type-text"><IconMail width={22} height={22} stroke={2} color="var(--accent-blue)" /> Emailem</span>
+            <span className="type-text"><IconMail width={22} height={22} stroke={2} color="var(--accent-blue)" /><span>Emailem</span></span>
           </div>
           <div className="type" onClick={() => (setChosenType("google"))}>
             { chosenType === "google" &&
             <motion.div className="type-background" layoutId="type-bg" transition={{ type: 'spring', stiffness: 800, damping: 80 }}/>}
-            <span className="type-text"><Google w={20} h={20} /> Googlem</span>
+            <span className="type-text"><Google w={20} h={20} /><span>Googlem</span></span>
           </div>
         </div>
 
