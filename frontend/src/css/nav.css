@@ -200,7 +200,7 @@
     background-color: var(--bg-secondary);
     width: 100%;
     z-index: 100;
-  }
+  } 
   .nav-link {
     font-size: 1.5rem;
   }
@@ -223,7 +223,7 @@
     background-color: rgba(255, 255, 255, 0.4);
     backdrop-filter: blur(16px) saturate(180%);
     z-index: 100;
-  }
+  } 
   .nav-p {
     width: 100%;
   }
