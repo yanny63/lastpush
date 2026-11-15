@@ -47,6 +47,7 @@
   --bg-secondary: #F2F2F7;
   --bg-tertiary: #E5E5EA;
   --bg-elevated: #FFFFFF;
+  --bg-gradient: linear-gradient(90deg, var(--color-indigo) 0%, var(--accent-blue) 50%, var(--accent-blue) 100%);
  
   --text-primary: #000000;
   --text-secondary: rgba(60, 60, 67, 0.6);
@@ -270,40 +271,25 @@ html, body {
  
 .download-button {
   position: relative;
-  background-color: var(--accent-blue);
+  background: var(--bg-gradient) padding-box, var(--bg-gradient) border-box;
   min-width: 160px;
   padding: 20px;
-  border: none;
+  background-size: 200% 100%;
+  background-position: right center;
+  border: 2px solid transparent;
   border-radius: var(--radius-full);
-  color: #ffffff;
+  color: #fff;
   font-weight: 700;
   cursor: pointer;
-  overflow: hidden;
   transition: 0.3s;
 }
 .download-button:active {
-  transform: scale(1.01) translateY(0);
+  transform: scale(0.98);
 }
-.download-button span {
-  position: relative;
-  z-index: 2;
+.download-button:hover {
+  background-position: left center;
 }
-.download-button::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0%;
-  height: 100%;
-  background: linear-gradient(90deg, var(--color-indigo), var(--accent-blue), var(--accent-blue));
-  border: none;
-  border-radius: var(--radius-full);
-  z-index: 1;
-  transition: 0.3s;
-}
-.download-button:hover::after {
-  width: 100%;
-}
+
  
 .home-background {
   width: min(400px, 80vw);
@@ -595,7 +581,7 @@ html, body {
   justify-content: center;
   gap: 8px;
   margin-top: 8px;
-}
+} 
 .home-feature-chip {
   padding: 8px 12px;
   border: 1px solid var(--border-subtle);
@@ -613,6 +599,9 @@ html, body {
 .home-highlights-inner {
   width: min(calc(100% - 48px), 1040px);
   margin: 0 auto;
+}
+.home-white-bg {
+  background-color: var(--bg-primary) !important;
 }
 .first {
   transform: translateX(-40px);
@@ -915,4 +904,20 @@ html, body {
   .home-highlights, .home-flow {
     padding-block: 48px;
   }
+}
+
+.d-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0,0,0,0.6);
+  z-index: 9999;
+}
+
+.dialog-wrapper {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  display: flex;   
+  align-items: center;
+  justify-content: center;
 }

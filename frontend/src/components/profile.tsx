@@ -1,4 +1,4 @@
-import { IconDots, IconQuestionMark, IconUser, IconUserCheck } from "@tabler/icons-react";
+import { IconArrowRight, IconBarbell, IconCalendarWeek, IconDots, IconFlame, IconPlus, IconQuestionMark, IconTarget, IconTrendingUp, IconUser, IconUserCheck, IconX } from "@tabler/icons-react";
 import useUser from "../contexts/userContext";
 import "../css/profile.css"
 import { useGSAP } from "@gsap/react";
@@ -8,6 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { getProfile, type TypeProfile, friend, unfriend } from "../utils/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import * as Dialog from "@radix-ui/react-dialog"
 
 gsap.registerPlugin(DrawSVGPlugin)
 
@@ -57,10 +58,22 @@ export default function Profile() {
     })
   })
 
+  const goalTypes = [
+      { svg: IconBarbell, goalType: "Liczba treningów", goalDescription: "Regularność i aktywność", goalId: 1 },
+      { svg: IconTrendingUp, goalType: "Wynik siłowy", goalDescription: "Poprawa wyników", goalId: 2 },
+      { svg: IconFlame, goalType: "Objętość treningowa", goalDescription: "Łączny przerzucony ciężar", goalId: 3 },
+      { svg: IconCalendarWeek, goalType: "Seria treningowa", goalDescription: "Treningi bez przerw", goalId: 4 }
+  ]
+
   const [ showFriendActions, setShowFriendActions ] = useState(false)
   const [ isRemovingFriend, setIsRemovingFriend ] = useState(false)
   const [ isUser, setIsUser ] = useState(false)
   const [ profile, setProfile ] = useState<TypeProfile | null>(null)
+  const [ aboutMe, setAboutMe ] = useState<string | null>(null)
+  const [ editingAboutMe, setEditingAboutMe ] = useState(false)
+  const [ currentGoals, setCurrentGoals ] = useState([])
+  const [ addingGoal, setAddingGoal ] = useState(false)
+  const [ selectedGoal, setSelectedGoal ] = useState(1)
 
   useEffect(() => {
     if (!id) {
@@ -101,6 +114,18 @@ export default function Profile() {
 
     return () => window.removeEventListener("click", windowClick)
   }, [showFriendActions])
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        if (editingAboutMe) {
+          setEditingAboutMe(false)
+        }
+      } 
+    }
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [])
 
   type Error = { id: number; message: string }
 
@@ -269,7 +294,16 @@ export default function Profile() {
           </div>
           <div className="profile-center-right">
             <div className="current-goal">
-              <h2>Aktualny cel</h2>
+              <h2>Aktualne cele</h2>
+              { currentGoals.length === 0 ?
+              <>
+              <p>
+                <IconTarget stroke={2} />
+                Brak aktualnych celi
+              </p>
+              { user?.id === id && <button className="add-description" onClick={() => {setAddingGoal(true)}}>Ustaw cel <IconArrowRight stroke={2} width={16} height={16} /></button>}
+              </> :
+              <>
               <h4>20 treningów we wrześniu</h4>
               <div className="goal-completion">
                 <div className="goal-math">
@@ -282,14 +316,78 @@ export default function Profile() {
                   <span className="goal-completion-percentage" style={{ width: "70%" }}></span>
                 </div>
               </div>
+              </>}
             </div>
             <div className="user-about">
               <h2>O mnie</h2>
-              <p>Buduję siłę i formę. Trenuje 4x w tygodniu. Wawa</p>
+              <p>
+                { !aboutMe && 
+                <> 
+                  <IconUser stroke={2} />
+                  <span>Brak opisu profilu</span>
+                </>
+                }
+
+              </p>
+              { (!aboutMe && user?.id === id) && 
+              <>
+                <button className="add-description" onClick={() => {setEditingAboutMe(true)}}>Dodaj opis <IconPlus stroke={2} width={16} height={16} /></button>
+              </>}
             </div>
           </div>
           </div>
       </div>
+      <Dialog.Root open={editingAboutMe || addingGoal}>
+        <AnimatePresence>
+          {(editingAboutMe || addingGoal) && 
+          <Dialog.Portal forceMount>
+            <Dialog.Overlay asChild forceMount>
+              <motion.div className="d-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}></motion.div>
+            </Dialog.Overlay>
+            <div className="dialog-wrapper">
+              <Dialog.Content>
+                <motion.div className="dialog-c" initial={{ transform: "scale(0.95)", opacity: 0 }} animate={{ transform: "scale(0.95)", opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.3 }}>
+                  { editingAboutMe && 
+                  <>
+                  <header>
+                    <h2>Ustaw swój opis</h2>
+                    <Dialog.Close onClick={() => {setEditingAboutMe(false)}}>
+                      <IconX stroke={2} />
+                    </Dialog.Close>
+                  </header>
+                  <textarea id="about-me"></textarea>
+                  <button className="save-description">Zapisz</button>
+                  </>}
+                  { addingGoal && 
+                  <>
+                  <header>
+                    <h2>Dodaj cel</h2>
+                    <Dialog.Close onClick={() => {setAddingGoal(false)}}>
+                      <IconX stroke={2} />
+                    </Dialog.Close>
+                  </header>
+                  <h4>Co chcesz osiągnąć?</h4>
+                  <div className="goal-types">
+                    { goalTypes.map((goal) => (
+                      <div onClick={() => {setSelectedGoal(goal.goalId)}} className={selectedGoal === goal.goalId ? "goal-type goal-selected" : "goal-type"} key={goal.goalId}>
+                          <goal.svg size={20} stroke={1.8} />
+                          <h3>{goal.goalType}</h3>
+                          <p>{goal.goalDescription}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <h4>Nazwa celu</h4>
+                  <input type="text" className="goal-i" placeholder="Np. 20 treningów w miesiącu" />
+                  <h4>Wartość docelowa</h4>
+                  <input type="number" className="goal-i" placeholder="20" />
+                  <button className="save-description">Zapisz</button>
+                  </>}
+                </motion.div>
+              </Dialog.Content>
+            </div>
+          </Dialog.Portal>}
+        </AnimatePresence>
+      </Dialog.Root>
     </div>
   )
 }

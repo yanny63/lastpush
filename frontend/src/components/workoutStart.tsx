@@ -7,7 +7,7 @@ import "../css/workout-start.css"
 import { parseDay } from "../utils/utils"
 import { useGSAP } from "@gsap/react"
 import gsap from "gsap"
-import { create_session, find_active_session, save_session, WORKOUT_TIPS } from "../utils/workout"
+import { create_session, find_active_session, WORKOUT_TIPS } from "../utils/workout"
 import { type WorkoutSession, type WorkoutSessionStatus, type SessionExercise } from "../utils/workout"
 import { ReturnTo, WorkoutLogo } from "./shared"
 

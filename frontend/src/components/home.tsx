@@ -189,7 +189,7 @@ function TrainingFlow({ ref }: { ref: React.RefObject<HTMLDivElement | null> }) 
   ]
 
   return (
-    <section className="home-section home-flow" aria-labelledby="home-flow-title">
+    <section className="home-section home-flow home-white-bg" aria-labelledby="home-flow-title">
       <div ref={ref} className="home-highlights-inner container">
         <div className="home-flow-heading">
           <p className="home-eyebrow">Prosty rytm</p>

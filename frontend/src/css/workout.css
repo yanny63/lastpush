@@ -1010,22 +1010,6 @@
   background-color: #1E293B;
 }
 
-.d-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: rgba(0,0,0,0.6);
-  z-index: 9999;
-}
-
-.dialog-wrapper {
-  position: fixed;
-  z-index: 10000;
-  inset: 0;
-  display: flex;   
-  align-items: center;
-  justify-content: center;
-}
-
 .d-content {
   background: var(--bg-secondary);
   backdrop-filter: blur(16px) saturate(180%);
@@ -1198,7 +1182,7 @@
   color: var(--accent-blue);
   width: 32px;
   height: 32px;
-}
+} 
 .workout-finished-stat span {
   display: flex;
   flex-direction: column;
