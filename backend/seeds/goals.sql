@@ -1,0 +1,16 @@
+-- CREATE TABLE IF NOT EXISTS user_goals (
+--   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+--   user_id UUID REFERENCES users(id) NOT NULL,
+--   title TEXT NOT NULL,
+--   goal_id INT REFERENCES goals(id) NOT NULL,
+--   target_value NUMERIC(10, 2) NOT NULL,
+--   exercise_id INT REFERENCES exercises(id),
+--   status TEXT DEFAULT 'active',
+--   created_at TIMESTAMPTZ DEFAULT now()
+-- );
+
+-- CREATE TABLE IF NOT EXISTS goals (
+--   id SERIAL PRIMARY KEY,
+--   title TEXT UNIQUE NOT NULL,
+--   description TEXT UNIQUE NOT NULL
+-- );

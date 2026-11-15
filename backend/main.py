@@ -48,13 +48,10 @@ app.mount("/uploads", StaticFiles(directory="images"), name="uploads")
 
 auth_scheme = OAuth2PasswordBearer(tokenUrl='token', auto_error=False)
 
-conn_pool = pool.SimpleConnectionPool(
+conn_pool = pool.ThreadedConnectionPool(
   minconn=1,
   maxconn=10,
-  host='localhost',
-  database='gym_app',
-  user=os.getenv('DATABASE_USER'),
-  password=os.getenv('DATABASE_PASSWORD')
+  dsn=os.getenv("DATABASE_URL"),
 )
 
 SECRET_KEY = os.getenv("SECRET_KEY")
