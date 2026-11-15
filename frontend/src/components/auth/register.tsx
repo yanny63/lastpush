@@ -33,7 +33,7 @@ export default function Register() {
   const [ hasSpecialChar, setHasSpecialChar ] = useState<boolean>(false)
   const [ containsUppercase, setContainsUppercase ] = useState<boolean>(false)
 
-  function Google() {
+  function Google() { 
     return (
       <img
         src="https://cdn.jsdelivr.net/gh/glincker/thesvg@main/public/icons/google/default.svg"

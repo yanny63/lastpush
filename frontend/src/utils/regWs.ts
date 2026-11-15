@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "./utils";
 import useUser from "../contexts/userContext";
+const WS_URL = import.meta.env.VITE_BACKEND_ADDRESS
 
 export default function useRegConnect(session: string | null, email: string, password: string) {
   const ws = useRef<WebSocket | null>(null)
@@ -10,7 +11,7 @@ export default function useRegConnect(session: string | null, email: string, pas
   const { getUser } = useUser()
 
   useEffect(() => {
-    ws.current = new WebSocket(`ws://192.168.1.33:8000/ws/verify?session=${session}`)
+    ws.current = new WebSocket(`${WS_URL}/ws/verify?session=${session}`)
 
     ws.current.onmessage = async (message) => {
       const data = JSON.parse(message.data)
