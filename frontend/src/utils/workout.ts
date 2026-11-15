@@ -83,10 +83,6 @@ export interface Exercises {
   image_url: string
 }
 
-export async function save_session(workoutId: string) {
-  
-}
-
 export function get_most_common(exercises: SessionExercise[]) {
   const values = new Map()
 
