@@ -33,12 +33,14 @@ conf = ConnectionConfig(
   VALIDATE_CERTS=True,
 )
 
+base_url = os.getenv("BASE_URL")
+
 app = FastAPI()
 passwords = Passwords()
 
 app.add_middleware(
   CORSMiddleware,
-  allow_origins=['http://localhost:5173', 'https://lastpush.pages.dev'],
+  allow_origins=['http://localhost:5173', 'https://lastpush.pages.dev', 'http://192.168.1.33:5173'],
   allow_credentials=True,
   allow_headers=['*'],
   allow_methods=['*']
@@ -185,7 +187,7 @@ async def register(user: User):
     token = secrets.token_urlsafe(32)
     token_to_db = hashlib.sha256(token.encode()).hexdigest()
     expires = datetime.now(timezone.utc) + timedelta(minutes=30)
-    link = f"http://192.168.1.33:5173/verify?token={token}"
+    link = f"https://{base_url}/verify?token={token}"
     register_session = secrets.token_urlsafe(32)
     await execute(
       "INSERT INTO verification (id, user_id, token, session, expires) VALUES (%s, %s, %s, %s, %s)", (register_session, row.get("id"), token_to_db, register_session, expires)
@@ -353,7 +355,7 @@ async def unfriend(token = Depends(auth_scheme), friend_id: str = Query(...)):
 async def exercises(startId: int = Query(...)):
   limit = 20
   e = await fetch_all("SELECT * FROM exercises WHERE id > %s ORDER BY id ASC LIMIT %s", (startId, limit))
-  
+  print(e)
   return {
     "limit": 20,
     "current_start_id": startId,

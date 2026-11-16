@@ -152,7 +152,7 @@ export default function Trening() {
             </div>
           </div>
           <div className="t-header-r">
-            <button className="blue-bg button">+ Nowy trening</button>
+            <button onClick={() => {navigate("/newWorkout")}} className="blue-bg button">+ Nowy trening</button>
           </div>
         </header>
         <main className="trening-main">

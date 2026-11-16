@@ -123,6 +123,7 @@ export default function Login() {
                 { passwordShown ? <IconEyeOff stroke={2} className="password-icon" onClick={() => (setPasswordShown(false))} /> 
                   : <IconEye stroke={2} className="password-icon" onClick={() => (setPasswordShown(true))} /> }
                 </div>
+                { error && <p className="error">{ error }</p> }
                 <div className="login-buttons">
                   <div className="remember-me-container">
                     <label className="remember-me">

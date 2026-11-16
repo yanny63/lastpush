@@ -429,18 +429,18 @@ export default function newWorkout() {
                   <button className="remove-exercise" onClick={(e) => {e.preventDefault(), removeExercise(exercise)}}><IconTrash stroke={2} /></button>
                 </div>
                 <div className="selected-exercise-lower">
-                  <div className="selected-border-con">
-                    <span>Serie: </span>
+                  <label className="selected-border-con">
+                    <span>Serie</span>
                     <input type="number" className="selected-input" onChange={(e) => {updateExercise(exercise.id, "sets", Number(e.target.value))}} placeholder="3" min={0} max={8} />
-                  </div>
-                  <div className="selected-border-con">
-                    <span>Powtórzenia: </span>
-                    <input type="text" className="selected-input reps" onChange={(e) => {updateExercise(exercise.id, "reps", e.target.value)}} placeholder="10-12" maxLength={7} />
-                  </div>
-                  <div className="selected-border-con">
-                    <span>Przerwa: </span>
+                  </label>
+                  <label className="selected-border-con">
+                    <span>Powtórzenia</span>
+                    <input type="text" className="selected-input" onChange={(e) => {updateExercise(exercise.id, "reps", e.target.value)}} placeholder="10-12" maxLength={7} />
+                  </label>
+                  <label className="selected-border-con">
+                    <span>Przerwa (s)</span>
                     <input type="number" className="selected-input" onChange={(e) => {updateExercise(exercise.id, "rest_seconds", Number(e.target.value))}} placeholder="90" maxLength={4} />
-                  </div>
+                  </label>
                 </div>
               </div>
             ))}
