@@ -28,7 +28,7 @@
 main {
   width: 100%;
 }
-
+ 
 .newWokrout-m {
   width: 100%;
   display: flex;
@@ -557,13 +557,7 @@ main {
 .muscles-button:hover {
   background-color: var(--bg-tertiary);
 }
-.active {
-  color: #fff;
-  background-color: var(--accent-blue);
-}
-.active:hover {
-  background-color: var(--accent-blue);
-}
+
 .active-all {
   color: #fff;
   background-color: #15141d;
